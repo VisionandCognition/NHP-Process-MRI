@@ -17,7 +17,7 @@ def process_xnat_dicoms(xnat_dir, nii_output='NII'):
         print('Processing %s' % ddir)
         system('dcm2nii -g n -o %s %s/' % (nii_output, ddir))
 
-    system('gzip %s/*.nii')
+    system('gzip -f %s/*.nii' % nii_output)
 
 if __name__ == '__main__':
     if len(sys.argv) == 1 and os.path.exists('xnat'):
