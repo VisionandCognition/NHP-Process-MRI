@@ -7,52 +7,69 @@ Reusable code is put in the Process-NHP-MRI repository, which is at:
 
 * https://github.com/VisionandCognition/Process-NHP-MRI
 
-Code that is specific to a scan is in the NHP_MRI directory.
-
-You should include the python directory in your PYTHONPATH:
+This repository include the process_nhp_mri Python package. To be able
+to use, you should include the python directory in your PYTHONPATH:
 
     export PYTHONPATH=$PYTHONPATH:/PATH/TO/Process-NHP-MRI/python
 
-Python package is located in the python subdirectory.
+This is necessary for some of the scripts in the NHP_MRI Data_proc directory.
 
-Other notes
------------
+Some of the python scripts that should not be included are in the
+`Process-NHP-MRI/bin` directory. You should add this to your $PATH.
 
-[2017-03-15]  This is how I have been processing the data so far for fullscreen checkerboards and reward-based activations. Much of it is scripted with python-scripts to avoid repetitive manual stuff. These scripts are in a ‘scripts’ folder in a session’s root (e.g., …/Data_proc/EDDY/20160803/scripts).
+Download data from XNAT
+-----------------------
 
+I've (JW) been downloading the XNAT data to (for example) `/NHP_MRI/Data_raw/EDDY/20170420/MRI/xnat`.
 
 Convert dicom to nifti
 ----------------------
 
-Use dcm2nii of dcm2niix in the terminal, e.g.:
-$ dcm2nii -o outputfolder dicomfolder/*
+If you download the data from the XNAT server, you can run:
+
+    process_xnat_dicoms.py xnat [NII]
+
+where `xnat` is the XNAT downloaded directory and `NII` is the nifti output directory. If your current directory has the directory `xnat` all of the parameters are optional. This function uses dcm2nii. It uses the gzip command for compression, instead of compression by dcm2nii, since the latter does not handle large files.
+
+Use dcm2nii or dcm2niix in the terminal, e.g.:
+
+    dcm2nii -o outputfolder dicomfolder/*
 
 
 Processing the T1 anatomical
 ----------------------------
 
 Average multiple volumes using:
-$ mri_motion_correct.fsl -o outputfile -i inputfile1 -i inputfile2 etc
+
+    mri_motion_correct.fsl -o outputfile -i inputfile1 -i inputfile2 etc
+    
 or
-$ mri_convert -o outputfile -i inputfile1 -i inputfile2 etc
+
+    mri_convert -o outputfile -i inputfile1 -i inputfile2 etc
 
 Correct for sphinx position and resample to iso voxels
-$ mri_convert -i inputfile -o outputfile --sphinx -vs 1 1 1
+
+    mri_convert -i inputfile -o outputfile --sphinx -vs 1 1 1
 
 Correct display directions to match standards
-$ fslreorient2std inputfile  outputfile
+
+    fslreorient2std inputfile  outputfile
 
 Equalize contrast throughout
-$ mri_nu_correct.mni --i inputfile --o outputfile --distance 24  
+
+    mri_nu_correct.mni --i inputfile --o outputfile --distance 24  
 
 Get the approximate middle coordinate (somewhere in the pons) and write them down (<x y z>)
-$ fslview T1_image &
+
+    fslview T1_image &
 
 Extract the brain using fsl’s BET routine (you may need to tweak the optional parameters a bit for the best result)
-$ bet inputfile outputfile(preferably ‘inputfile_brain’) -f 0.3 -c <x y z>
+
+    bet inputfile outputfile(preferably ‘inputfile_brain’) -f 0.3 -c <x y z>
 
 You can also use the gui:
-$ Bet &
+
+    Bet &
 
 
 Preprocessing functionals
@@ -60,20 +77,26 @@ Preprocessing functionals
 
 all_preprocess.py
 This scripts performs some standard pre-processing tasks. It calls some other scripts that are located in the ‘subscripts’ folder:
-	re_orient_functs.py
+
+    re_orient_functs.py
+	
 Looks for functional runs in a particular location (see script).
 Re-orients from sphynx orientation and creates 1 mm isotropic voxels
-		$ mri_convert -i inputfile -o outputfile --sphinx -vs 1 1 1
+
+    mri_convert -i inputfile -o outputfile --sphinx -vs 1 1 1
 
 Correct display directions to match standards
-		$ fslreorient2std inputfile  outputfile
 
-	get_motion_outliers.py
+    fslreorient2std inputfile  outputfile
+    get_motion_outliers.py
+	
 This takes the functional runs, looks for motion outliers and creates a mask (in a text file that allows excluding these outlier volumes from the GLM later.
 It also creates fsl-output in a html file in the QA folder.
 Loops over runs.
- The relevant function to detect outliers is:
-$ fsl_motion_outliers -i inputfile -o outputfile --dvars -p outputplot -v
+
+The relevant function to detect outliers is:
+ 
+    fsl_motion_outliers -i inputfile -o outputfile --dvars -p outputplot -v
 
 the --dvars indicates detection based on on intensity fluctuations, you can also use --fd for a frame-wise displacement criterion.
 
@@ -84,7 +107,8 @@ Processing the functionals
 The first run may be done manually to see if everything works as expected and to create a template fsl-settings file (fsf-file). This can then be used to do all other runs in a batch.
 
 Start the fsl feat gui
-$ Feat &
+
+    Feat &
 
 ### Data ###
 
@@ -101,12 +125,14 @@ High pass temporal filtering
 Include a MELODIC ICA if that’s relevant for your question (will take longer to process)
 
 ### Registration settings ###
+
 Main structural >> the high-res T1
 You may need to check what registration method works best but here. BBR doesn’t always work great for monkeys.
 Standard space >> a template, e.g. the D99_template.nii.gz (Saleem & Logothetis atlas)
 I’d go with 12 DOF here, but you can try nonlinear as well (takes longer and may give weird result, so always check your registrations)
 
 ### Stats ###
+
 Use FILM
 Add Standard Motion Parameters
 Add additional confound Evs >> your motion_outliers filename
