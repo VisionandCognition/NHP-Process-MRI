@@ -29,7 +29,7 @@ If you download the data from the XNAT server, you can run:
 
     process_xnat_dicoms.py xnat [NII]
 
-where `xnat` is the XNAT downloaded directory and `NII` is the nifti output directory. If your current directory has the directory `xnat` all of the parameters are optional. This function uses dcm2nii. It uses the gzip command for compression, instead of compression by dcm2nii, since the latter does not handle large files.
+where `xnat` is the XNAT downloaded directory and `NII` is the nifti output directory. If your current directory has the directory `xnat` all of the parameters are optional. This function uses `dcm2niix`. It uses the gzip command for compression, since the `dcm2nii` had difficulty handling compression of large files (I haven't tested dcm2niix).
 
 Use dcm2nii or dcm2niix in the terminal, e.g.:
 
