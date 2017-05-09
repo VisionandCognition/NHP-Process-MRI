@@ -58,7 +58,7 @@ this might be equivalent to:
 
 Correct for sphinx position and resample to iso voxels
 
-    mri_convert -i inputfile -o outputfile --sphinx -vs 1 1 1
+    mri_convert -i inputfile -o outputfile --sphinx -vs  0.5 0.5 0.5
 
 Correct display directions to match standards
 
@@ -79,6 +79,41 @@ Extract the brain using fsl’s BET routine (you may need to tweak the optional 
 You can also use the gui:
 
     Bet &
+
+Brain extraction sometimes works better with Freesurfer
+    
+    CK >> Add FS code here...
+
+
+Processing the B0 fieldmap for undistortion
+-------------------------------------------
+
+Reorient the magnitude/phase images
+
+    mri_convert -i XXX.nii.gz  -o XXX_ro.nii.gz --sphinx -vs 1 1 1
+    fslreorient2std -i XXX_ro.nii.gz -o XXX_ro.nii.gz 
+
+Convert phase image to radians (Philips scales from -100 to 100)
+ 
+    fslmaths B0_phase_ro.nii.gz -mul 3.141592653589793116 -div 100 B0_phase_rad -odt float
+
+Skullstrip the magnitude volume (you may need to adjust parameters, and find center x,y,z)
+
+    bet B0_mag_ro B0_mag_ro_brain  -f 0.35 -g -0.1 -c x y z
+
+Create a brain mask
+
+    fslmaths B0_mag_ro_brain -dilM B0_mag_ro_brain_mask
+
+Unwrap the phase image with PRELUDE and mask with brain
+
+    prelude -a B0_mag_ro.nii.gz -p B0_phase_rad.nii.gz -o B0_phase_unwrap.nii.gz -m B0_mag_ro_brain_mask.nii.gz
+
+Convert to radials-per-second by multiplying with 200 (delta TE is 5 msec >> check if you didn't use the standard B0 sequence).
+
+    fslmaths B0_phase_unwrap.nii.gz -mul 200 B0_phase_unwrap.nii.gz
+
+This gives you the files that you later include in the FSL pre-processing tab fo perform fieldmap correction
 
 
 Preprocessing functionals
@@ -121,13 +156,23 @@ Start the fsl feat gui
 
 ### Data ###
 
-Select your pre-processed functional data as 4D data and rename the default output directory
-Total volumes and TR should be automatically detect (but check!)
+Select your pre-processed functional data as 4D data and rename the default output directory.
+Total volumes and TR should be automatically detected (but check!)
 Do not delete any volumes from the start. The dummy scans aren’t saved and we model the planned pre-experimental volumes as they are defined in the runstim.
-High pass filter to match design
+High pass filter to match design.
 
 ### Pre-stats settings ###
+
 MCFLIRT motion corrections
+B0 unwarping
+    Fieldmap >> the unwarped phase volume (B0_phase_unwrap.nii.gz)
+    Fieldmap mag >> the brain extracted magnitude volume (B0_mag_ro_brain.nii.gz)
+    Effective EPI echo spacing >> 0.5585 
+        This is based on Diederik’s formula: EEES =  ((1000 * wfs)/(434.215 * (EPI factor+1))/acceleration)
+        with wfs (water fat shift) = 17.462; EPI factor = 35; acceleration (SENSE) = 2 (check sequence!)
+    EPI TE >> 20 ms
+    Unwarp direction >> -y
+    % signal loss threshold >> 10
 BET brain extraction
 Smooth as desired (we originally had 1.25 mm voxels and resampled to 1 mm, so I wouldn’t go much higher than 2 mm here)
 High pass temporal filtering
@@ -156,8 +201,8 @@ This may not be so interesting for a single run, but you may want to check it an
 Choose if you want to do visualize on voxel or cluster base.
 
 
- Processing the functionals: BATCH
- ---------------------------------
+Processing the functionals: BATCH
+---------------------------------
 
 Running FSL Feat manually creates a design.fsf file that we can use as a template for batch processing (can also be created by choosing ‘save’ in the gui). Copy it (I use a folder fsf_lev1 in scripts where I save it as design_template.fsf)
 
