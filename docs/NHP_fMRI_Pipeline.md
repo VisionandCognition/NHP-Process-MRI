@@ -7,7 +7,7 @@ Reusable code is put in the Process-NHP-MRI repository, which is at:
 
 * https://github.com/VisionandCognition/Process-NHP-MRI
 
-This repository include the process_nhp_mri Python package. To be able
+This repository includes the `process_nhp_mri` Python package. To be able
 to use, you should include the python directory in your PYTHONPATH:
 
     export PYTHONPATH=$PYTHONPATH:/PATH/TO/Process-NHP-MRI/python
@@ -17,10 +17,12 @@ This is necessary for some of the scripts in the NHP_MRI Data_proc directory.
 Some of the python scripts that should not be included are in the
 `Process-NHP-MRI/bin` directory. You should add this to your $PATH.
 
+
 Download data from XNAT
 -----------------------
 
 I've (JW) been downloading the XNAT data to (for example) `/NHP_MRI/Data_raw/EDDY/20170420/MRI/xnat`.
+
 
 Convert dicom to nifti
 ----------------------
@@ -35,17 +37,24 @@ Use dcm2nii or dcm2niix in the terminal, e.g.:
 
     dcm2nii -o outputfolder dicomfolder/*
 
+Copying the data from Data_raw to Data_proc
+-------------------------------------------
+
+I have an example script of this at `/NHP_MRI/Data_raw/EDDY/20170420/copy-to-proc.sh`.
+
 
 Processing the T1 anatomical
 ----------------------------
 
+The standard location for T1 data is `/NHP_MRI/Data_proc/SUBJ/DATE/anat/T1`. An example script for running the below is at: `/NHP_MRI/Data_proc/EDDY/20170314/anat/T1/process_T1.sh`.
+
 Average multiple volumes using:
 
     mri_motion_correct.fsl -o outputfile -i inputfile1 -i inputfile2 etc
-    
-or
 
-    mri_convert -o outputfile -i inputfile1 -i inputfile2 etc
+this might be equivalent to:
+
+    mri_motion_correct2 -o outputfile -i inputfile1 -i inputfile2 etc
 
 Correct for sphinx position and resample to iso voxels
 
