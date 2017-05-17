@@ -19,7 +19,18 @@ os.system("%s/get_motion_outliers.py"%(script_subpath))
 
 import process_nhp_mri as nhp
 
+def mkdir_p(path):
+    """ http://stackoverflow.com/questions/600268/mkdir-p-functionality-in-python """
+    try:
+        os.makedirs(path)
+    except OSError as exc:  # Python >2.5
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else:
+            raise
+
 def preprocess_all(session_path):
+    mkdir_p("%s/QA" % session_path)
     nhp.reorient_functs(session_path)
     nhp.get_motion_outliers(session_path)
 
