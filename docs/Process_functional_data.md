@@ -49,35 +49,35 @@ High pass filter to match design.
 ### Pre-stats settings ###
 
 * Motion correction: MCFLIRT
-* B0 unwarping (check)
-**    Fieldmap >> the unwarped phase volume (B0_phase_unwrap.nii.gz)
-**    Fieldmap mag >> the brain extracted magnitude volume (B0_mag_ro_brain.nii.gz)
-
-    Effective EPI echo spacing >> 0.5585 
-        This is based on Diederik’s formula: EEES =  ((1000 * wfs)/(434.215 * (EPI factor+1))/acceleration)
-        with wfs (water fat shift) = 17.462; EPI factor = 35; acceleration (SENSE) = 2 (check sequence!)
-    EPI TE >> 20 ms
-    Unwarp direction >> -y
-    % signal loss threshold >> 10
-    
-* BET brain extraction
+* B0 unwarping [✔]
+  * Fieldmap = the unwarped phase volume (B0_phase_unwrap.nii.gz)
+  * Fieldmap mag = the brain extracted magnitude volume (B0_mag_ro_brain.nii.gz)
+  * Effective EPI echo spacing = 0.5585 
+    * This is based on Diederik’s formula: EEES =  ((1000 * wfs)/(434.215 * (EPI factor+1))/acceleration)
+    * with wfs (water fat shift) = 17.462; EPI factor = 35; acceleration (SENSE) = 2 (check sequence!)
+  * EPI TE = 20 ms
+  * Unwarp direction = -y
+  * % signal loss threshold = 10
+  
+* BET brain extraction [✔]
 * Smooth as desired (we originally had 1.25 mm voxels and resampled to 1 mm, so I wouldn’t go much higher than 2 mm here)
-* High pass temporal filtering
+* High pass temporal filtering [✔]
 * Include a MELODIC ICA if that’s relevant for your question (will take longer to process)
 
 ### Registration settings ###
 
-Main structural >> the high-res T1
-You may need to check what registration method works best but here. BBR doesn’t always work great for monkeys.
-Standard space >> a template, e.g. the D99_template.nii.gz (Saleem & Logothetis atlas)
+* Main structural: the high-res T1 (e.g. "YYYYMMDD/anat/T1/T1_skull-stripped.nii.gz")
+* You may need to check what registration method works best but here. BBR doesn’t always work great for monkeys (although it is required when using B0 unwarping).
+* Standard space: a template, e.g. the D99_template.nii.gz (Saleem & Logothetis atlas)
 I’d go with 12 DOF here, but you can try nonlinear as well (takes longer and may give weird result, so always check your registrations)
 
 ### Stats ###
 
-Use FILM
-Add Standard Motion Parameters
-Add additional confound Evs >> your motion_outliers filename
-Full model setup for a GLM
+* Use FILM
+* Add Standard Motion Parameters
+* Add additional confound Evs = your motion_outliers filename
+* Full model setup for a GLM
+
 For each EV (‘explanatory variable’) link a 3 column text file with the model (column 1: time of event, column 2: duration of event, column 3: value, choose 1 if this isn’t parametrically varied).
 I save these text files in the folder ‘model’. The stimulus is of course most important, but I also wrote some matlab scripts to create them for behavioral and eye parameters.
 Convolve the EV’s with a double gamma HRF			
