@@ -41,27 +41,29 @@ Start the fsl feat gui
 
 ### Data ###
 
-Select your pre-processed functional data as 4D data and rename the default output directory.
+Select your pre-processed functional data as 4D data ("fois.nii.gz") and rename the default output directory (e.g. "run00x/fsl_lev1/manual").
 Total volumes and TR should be automatically detected (but check!)
 Do not delete any volumes from the start. The dummy scans aren’t saved and we model the planned pre-experimental volumes as they are defined in the runstim.
 High pass filter to match design.
 
 ### Pre-stats settings ###
 
-MCFLIRT motion corrections
-B0 unwarping
-    Fieldmap >> the unwarped phase volume (B0_phase_unwrap.nii.gz)
-    Fieldmap mag >> the brain extracted magnitude volume (B0_mag_ro_brain.nii.gz)
+* Motion correction: MCFLIRT
+* B0 unwarping (check)
+**    Fieldmap >> the unwarped phase volume (B0_phase_unwrap.nii.gz)
+**    Fieldmap mag >> the brain extracted magnitude volume (B0_mag_ro_brain.nii.gz)
+
     Effective EPI echo spacing >> 0.5585 
         This is based on Diederik’s formula: EEES =  ((1000 * wfs)/(434.215 * (EPI factor+1))/acceleration)
         with wfs (water fat shift) = 17.462; EPI factor = 35; acceleration (SENSE) = 2 (check sequence!)
     EPI TE >> 20 ms
     Unwarp direction >> -y
     % signal loss threshold >> 10
-BET brain extraction
-Smooth as desired (we originally had 1.25 mm voxels and resampled to 1 mm, so I wouldn’t go much higher than 2 mm here)
-High pass temporal filtering
-Include a MELODIC ICA if that’s relevant for your question (will take longer to process)
+    
+* BET brain extraction
+* Smooth as desired (we originally had 1.25 mm voxels and resampled to 1 mm, so I wouldn’t go much higher than 2 mm here)
+* High pass temporal filtering
+* Include a MELODIC ICA if that’s relevant for your question (will take longer to process)
 
 ### Registration settings ###
 
