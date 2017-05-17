@@ -39,14 +39,14 @@ Start the fsl feat gui
 
     Feat &
 
-### Data ###
+### Data
 
 Select your pre-processed functional data as 4D data ("fois.nii.gz") and rename the default output directory (e.g. "run00x/fsl_lev1/manual").
 Total volumes and TR should be automatically detected (but check!)
 Do not delete any volumes from the start. The dummy scans aren’t saved and we model the planned pre-experimental volumes as they are defined in the runstim.
 High pass filter to match design.
 
-### Pre-stats settings ###
+### Pre-stats settings
 
 * Motion correction: MCFLIRT
 * B0 unwarping [✔]
@@ -69,21 +69,25 @@ High pass filter to match design.
 * Main structural: the high-res T1 (e.g. "YYYYMMDD/anat/T1/T1_skull-stripped.nii.gz")
 * You may need to check what registration method works best but here. BBR doesn’t always work great for monkeys (although it is required when using B0 unwarping).
 * Standard space: a template, e.g. the D99_template.nii.gz (Saleem & Logothetis atlas)
-I’d go with 12 DOF here, but you can try nonlinear as well (takes longer and may give weird result, so always check your registrations)
+  * I’d go with 12 DOF here, but you can try nonlinear as well (takes longer and may give weird result, so always check your registrations)
 
-### Stats ###
+### Stats
 
 * Use FILM
 * Add Standard Motion Parameters
-* Add additional confound Evs = your motion_outliers filename
+* Add additional confound Evs = your motion_outliers filename (e.g. "run00x/funct/motion_assess/confound.txt")
 * Full model setup for a GLM
+
+#### Process Behavior data / Create model
+
+For curve tracing, there is `calc_curvetracing_time_events.py` in the "bin" of this repository. This does not analyze the Eye traces.
 
 For each EV (‘explanatory variable’) link a 3 column text file with the model (column 1: time of event, column 2: duration of event, column 3: value, choose 1 if this isn’t parametrically varied).
 I save these text files in the folder ‘model’. The stimulus is of course most important, but I also wrote some matlab scripts to create them for behavioral and eye parameters.
 Convolve the EV’s with a double gamma HRF			
 Use the Contrast & F-tests tab to set the EV(s) of interest
 
-### Post-stats ###
+### Post-stats
 This may not be so interesting for a single run, but you may want to check it anyway.
 Choose if you want to do visualize on voxel or cluster base.
 
