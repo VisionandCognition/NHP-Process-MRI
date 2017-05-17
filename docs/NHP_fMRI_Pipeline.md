@@ -119,10 +119,12 @@ This gives you the files that you later include in the FSL pre-processing tab fo
 Preprocessing functionals
 -------------------------
 
-all_preprocess.py
-This scripts performs some standard pre-processing tasks. It calls some other scripts that are located in the ‘subscripts’ folder:
+You can run the command `preprocess_functionals.py` from the session directory (the directory with the `run00x`). This works the same as `all_preprocess.py`.
 
-    re_orient_functs.py
+### all_preprocess.py
+This scripts performs some standard pre-processing tasks. It calls some other scripts that are located in the ‘subscripts’ folder (also in this repository, in process_nhp_mri package):
+
+#### re_orient_functs.py
 	
 Looks for functional runs in a particular location (see script).
 Re-orients from sphynx orientation and creates 1 mm isotropic voxels
@@ -132,7 +134,8 @@ Re-orients from sphynx orientation and creates 1 mm isotropic voxels
 Correct display directions to match standards
 
     fslreorient2std inputfile  outputfile
-    get_motion_outliers.py
+    
+#### get_motion_outliers.py
 	
 This takes the functional runs, looks for motion outliers and creates a mask (in a text file that allows excluding these outlier volumes from the GLM later.
 It also creates fsl-output in a html file in the QA folder.
