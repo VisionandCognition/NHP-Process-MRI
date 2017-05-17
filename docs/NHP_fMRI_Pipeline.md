@@ -43,46 +43,10 @@ Copying the data from Data_raw to Data_proc
 I have an example script of this at `/NHP_MRI/Data_raw/EDDY/20170420/copy-to-proc.sh`.
 
 
-Processing the T1 anatomical
+[Processing the T1 anatomical](Process_T1_anatomical.md)
 ----------------------------
 
-The standard location for T1 data is `/NHP_MRI/Data_proc/SUBJ/DATE/anat/T1`. An example script for running the below is at: `/NHP_MRI/Data_proc/EDDY/20170314/anat/T1/process_T1.sh`.
-
-Average multiple volumes using:
-
-    mri_motion_correct.fsl -o outputfile -i inputfile1 -i inputfile2 etc
-
-this might be equivalent to:
-
-    mri_motion_correct2 -o outputfile -i inputfile1 -i inputfile2 etc
-
-Correct for sphinx position and resample to iso voxels
-
-    mri_convert -i inputfile -o outputfile --sphinx -vs  0.5 0.5 0.5
-
-Correct display directions to match standards
-
-    fslreorient2std inputfile  outputfile
-
-Equalize contrast throughout
-
-    mri_nu_correct.mni --i inputfile --o outputfile --distance 24  
-
-Get the approximate middle coordinate (somewhere in the pons) and write them down (<x y z>)
-
-    fslview T1_image &
-
-Extract the brain using fsl’s BET routine (you may need to tweak the optional parameters a bit for the best result)
-
-    bet inputfile outputfile(preferably ‘inputfile_brain’) -f 0.3 -c <x y z>
-
-You can also use the gui:
-
-    Bet &
-
-Brain extraction sometimes works better with Freesurfer
-    
-    CK >> Add FS code here...
+Moved to [Processing T1 anatomical](Process_T1_anatomical.md).
 
 
 Processing the B0 fieldmap for undistortion
@@ -116,7 +80,7 @@ Convert to radials-per-second by multiplying with 200 (delta TE is 5 msec >> che
 This gives you the files that you later include in the FSL pre-processing tab fo perform fieldmap correction
 
 
-Processing functional data
+[Processing functional data](Process_functional_data.md)
 ==========================
 
 Information on processing the functional data has been moved to [Process functional data](Process_functional_data.md).
