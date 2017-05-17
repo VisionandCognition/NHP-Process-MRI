@@ -81,6 +81,6 @@ This gives you the files that you later include in the FSL pre-processing tab fo
 
 
 [Processing functional data](Process_functional_data.md)
-==========================
+----------------------------
 
 Information on processing the functional data has been moved to [Process functional data](Process_functional_data.md).
