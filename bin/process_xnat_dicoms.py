@@ -22,13 +22,15 @@ def system(cmd):
     return result.decode('utf-8').splitlines()
 
 def process_xnat_dicoms(xnat_dir, nii_output='NII'):
+    # using find command inside python is pretty bad ...
     cmd = 'find "%s" -name DICOM' % xnat_dir
     dicom_dirs = system(cmd)
     os.makedirs(nii_output, exist_ok=True)
     for ddir in dicom_dirs:
         print('Processing %s' % ddir)
-        system('dcm2niix -g n -o %s %s/' % (nii_output, ddir))
+        system('dcm2niix -o %s %s/' % (nii_output, ddir))
 
+    print('\nThe following will probably fail, that\'s okay:')
     system('gzip -f %s/*.nii' % nii_output)
 
 if __name__ == '__main__':
