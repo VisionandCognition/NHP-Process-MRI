@@ -57,8 +57,8 @@ High pass filter to match design.
     * with wfs (water fat shift) = 17.462; EPI factor = 35; acceleration (SENSE) = 2 (check sequence!)
   * EPI TE = 20 ms
   * Unwarp direction = y or  -y (try both)
-    * Should be y if you scaled from -\pi to \pi (Diederick's example script)
-    * -y if you scaled from 0 to  2 \pi
+    * Should be y if you scaled from -\pi to \pi (Diederick's example script)  ?????? (need to double check)
+    * -y if you scaled from 0 to  2 \pi ??????
   * % signal loss threshold = 10
   
 * BET brain extraction [✔]
@@ -68,7 +68,7 @@ High pass filter to match design.
 
 ### Registration settings ###
 
-* Main structural: the high-res T1 (e.g. "YYYYMMDD/anat/T1/T1_skull-stripped.nii.gz")
+* Main structural: the high-res T1 (e.g. "YYYYMMDD/anat/T1/T1_avg_nu.nii.gz" should have corresponding "*_brain.nii.gz")
 * You may need to check what registration method works best but here. BBR doesn’t always work great for monkeys (although it is required when using B0 unwarping).
 * Standard space: a template, e.g. the D99_template.nii.gz (Saleem & Logothetis atlas)
   * I’d go with 12 DOF here, but you can try nonlinear as well (takes longer and may give weird result, so always check your registrations)
