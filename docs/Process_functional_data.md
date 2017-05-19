@@ -56,7 +56,9 @@ High pass filter to match design.
     * This is based on Diederik’s formula: EEES =  ((1000 * wfs)/(434.215 * (EPI factor+1))/acceleration)
     * with wfs (water fat shift) = 17.462; EPI factor = 35; acceleration (SENSE) = 2 (check sequence!)
   * EPI TE = 20 ms
-  * Unwarp direction = -y
+  * Unwarp direction = y or  -y (try both)
+    * Should be y if you scaled from -\pi to \pi (Diederick's example script)
+    * -y if you scaled from 0 to  2 \pi
   * % signal loss threshold = 10
   
 * BET brain extraction [✔]
