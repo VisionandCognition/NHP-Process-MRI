@@ -99,7 +99,7 @@ Processing the functionals: BATCH
 
 Running FSL Feat manually creates a design.fsf file that we can use as a template for batch processing (can also be created by choosing ‘save’ in the gui). Copy it (I use a folder fsf_lev1 in scripts where I save it as design_template.fsf)
 
-Edit this file with wildcards so we can use to create run-specific design files (I use ‘NTPTS’ where the number of volumes is defined, ‘RUNNUM’ where the run-number is mentioned)
+Edit this file with wildcards so we can use to create run-specific design files. I use ‘NTPTS’ where the number of volumes is defined ("set fmri(npts) \d+"), ‘RUNNUM’ where the run-number is mentioned (`%fs/run\d\d\d/runRUNNUM/g`).
 
 make_fsf_designs.py
 uses the template to create run_specific design files. Replaces the wildcards and saves design files in the ‘lev1’ folder
