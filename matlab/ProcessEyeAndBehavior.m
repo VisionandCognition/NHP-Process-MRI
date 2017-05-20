@@ -6,7 +6,7 @@ function ProcessEyeAndBehavior
 
 %% datapaths ---------------------------------------
 monkey = 'EDDY'; % all caps
-sess_date = '20170314'; %yyyymmdd
+sess_date = '20170511/CurveTracing'; %yyyymmdd
 
 % NB! proper logging info is available for 20160721 and later
 % =====================================
@@ -16,7 +16,12 @@ DoReward = false;
 % =====================================
 
 base_path = '/big/NHP_MRI/';
-rundirs=dir([base_path 'Data_proc/' monkey '/' sess_date '/run*']);
+rundirs_pattern=[base_path 'Data_proc/' monkey '/' sess_date '/run*'];
+rundirs=dir(rundirs_pattern);
+assert(size(rundirs,1) > 0, ['Did not find directories matching ' ...
+    rundirs_pattern ...
+    ]);
+
 for i=1:length(rundirs)
     fprintf('%s\n', rundirs(i).name);
     frun(i).dirname = rundirs(i).name;
@@ -66,7 +71,7 @@ for i=1:length(frun)
         
         temp =  dir('Log*.csv');
         potential_event_logs = {temp.name};
-        fn_csv_ind = regexp(potential_event_logs, '^Log.*_\d{8}T\d{4}\.csv$');
+        fn_csv_ind = regexp(potential_event_logs, '^Log.*_\d{8}T\d{4}(?:_eventlog)?\.csv$');
         fn_csv_mask = cellfun(@(x) length(x)==1, fn_csv_ind);
         fn_csv = potential_event_logs{fn_csv_mask};
         beh(i,bf).event_log = readtable(fn_csv);
@@ -113,6 +118,14 @@ for i=1:size(beh,1)
     for run_n = 1:size(beh,2)
         eyeRecOnMsk = strcmp(beh(i,run_n).event_log.event, 'EyeRecOn');
         assert(sum(eyeRecOnMsk)==1);
+        
+        % JW: needed for JW's annoying column name changes
+        if ~any(strcmp('time',beh(i,run_n).event_log.Properties.VariableNames))
+            if any(strcmp('time_s',beh(i,run_n).event_log.Properties.VariableNames))
+                beh(i,run_n).event_log.time = beh(i,run_n).event_log.time_s;
+            end
+        end
+        
         eyestart = beh(i,run_n).event_log.time(eyeRecOnMsk)/1000;
         
         mriTriggerMsk = strcmp(beh(i,run_n).event_log.event, 'MRI_Trigger');

@@ -1,26 +1,24 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python
 
-import glob
+# This script will run each subjects design.fsf
+
 import os
+import glob
 import sys
-import errno
 
-import process_nhp_mri as nhp
 
-def mkdir_p(path):
-    """ http://stackoverflow.com/questions/600268/mkdir-p-functionality-in-python """
-    try:
-        os.makedirs(path)
-    except OSError as exc:  # Python >2.5
-        if exc.errno == errno.EEXIST and os.path.isdir(path):
-            pass
-        else:
-            raise
+def print_run(cmd):
+    print('%s\n' % cmd)
+    return os.system(cmd)
 
-def preprocess_all(session_path):
-    mkdir_p("%s/QA" % session_path)
-    nhp.reorient_functs(session_path)
-    nhp.get_motion_outliers(session_path)
+def run_all_fsf_lev1(session_path):
+    fsfdir="%s/scripts/fsf_lev1" % (session_path)
+
+    fsffiles=glob.glob("%s/lev1/design_run[0-9][0-9][0-9].fsf" % (fsfdir))
+
+    for fsffile in fsffiles:
+        print_run("feat %s"%(fsffile))
+
 
 if __name__ == '__main__':
     session_path = None
@@ -29,11 +27,12 @@ if __name__ == '__main__':
             print "No 'run0xx' directory found in current location."
         else:
             session_path = os.getcwd()
+
     elif len(sys.argv) == 2:
         session_path = sys.argv[1]
 
     if session_path is not None:
-        sys.exit(preprocess_all(session_path))
+        sys.exit(run_all_fsf_lev1(session_path))
     else:
         print("Syntax:")
         print("\t%s [session_path]")
