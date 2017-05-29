@@ -3,39 +3,54 @@ Processing the T1 anatomical
 
 The standard location for T1 data is `/NHP_MRI/Data_proc/SUBJ/DATE/anat/T1`. An example script for running the below is at: `/NHP_MRI/Data_proc/EDDY/20170314/anat/T1/process_T1.sh` (more recent: [process-t1.sh](https://gist.github.com/williford/92d75962567404239574539104a2d1e1)).
 
-The information below is outdated.
+### Pre-processing
 
-Average multiple volumes using:
+If you are combining different types of T1's, use something like the following:
 
-    mri_motion_correct.fsl -o outputfile -i inputfile1 -i inputfile2 etc
+    #!/bin/bash
+    
+    set -e # exit if a command fails
+    
+    # --- First process the T1's individually
+    FILES="T1_07.nii.gz
+    T1_10.nii.gz
+    T1_12.nii.gz"
 
-this might be equivalent to:
+    preprocess_indiv () {
+      local f=$1
+      b=${f%.nii.gz}
+      mri_convert -i ${b}.nii.gz -o ${b}_ro.nii.gz --sphinx -vs 0.5 0.5 0.5
+      fslreorient2std ${b}_ro.nii.gz ${b}_ro.nii.gz
+      mri_nu_correct.mni --i ${b}_ro.nii.gz --o ${b}_nu.nii.gz --distance 24
+    }
 
-    mri_motion_correct2 -o outputfile -i inputfile1 -i inputfile2 etc
+    for f in $FILES; do
+      preprocess_indiv $f &
+    done
 
-Correct for sphinx position and resample to iso voxels
+    wait # wait for individual file preprocessing
 
-    mri_convert -i inputfile -o outputfile --sphinx -vs  0.5 0.5 0.5
-
-Correct display directions to match standards
-
-    fslreorient2std inputfile  outputfile
-
-Equalize contrast throughout
-
-    mri_nu_correct.mni --i inputfile --o outputfile --distance 24  
+### Using the BET command
 
 Get the approximate middle coordinate (somewhere in the pons) and write them down (<x y z>)
 
     fslview T1_image &
 
+JW: BET might work better a little higher up, like this:
+
+![BET center](images/BET-skull-stripping-center_20170511.png)
+
 Extract the brain using fsl’s BET routine (you may need to tweak the optional parameters a bit for the best result)
 
     bet inputfile outputfile(preferably ‘inputfile_brain’) -f 0.3 -c <x y z>
 
+JW note: I find that `-f 0.55` works better for our data.
+
 You can also use the gui:
 
     Bet &
+
+### Performing Brain extraction with Freesurfer
 
 Brain extraction sometimes works better with Freesurfer
     
