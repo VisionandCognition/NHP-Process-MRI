@@ -1,4 +1,4 @@
-Run 'process-fieldmaps.sh' or 'process-fieldmaps.sh x y z', where x,y,z are the center of the brain.
+Run `process-fieldmaps.sh` (from bin directory) or `process-fieldmaps.sh x y z`, where x,y,z are the center of the brain.
 Calling without arguments will initiate the processing and then open the magnitude image with fslview (so you can find center).
 
 Details
