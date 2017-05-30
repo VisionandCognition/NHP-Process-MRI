@@ -52,7 +52,7 @@ Moved to [Processing T1 anatomical](Process_T1_anatomical.md).
 [Processing the B0 fieldmap for undistortion](Processing_B0_fieldmap_for_undistortion.md)
 -------------------------------------------
 
-Run 'process-fieldmaps.sh' or 'process-fieldmaps.sh x y z', where x,y,z are the center of the brain.
+Run `process-fieldmaps.sh` or `process-fieldmaps.sh x y z`, where x,y,z are the center of the brain.
 Calling without arguments will initiate the processing and then open the magnitude image with fslview (so you can find center).
 
 For more details, visit [Processing the B0 fieldmap for undistortion](Processing_B0_fieldmap_for_undistortion.md).
