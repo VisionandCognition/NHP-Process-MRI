@@ -54,5 +54,35 @@ You can also use the gui:
 
 Brain extraction sometimes works better with Freesurfer
     
-    CK >> Add FS code here...
+(JW) from 20170524/anat/T1/process_t1-step2_freesurfer.sh
+
+    # -- Convert for freesurfer
+    # Not performing crop, b/c it doesn't seem needed and I want to put back in the
+    #   coordinates.
+    mri_convert -i T1_avg_nu.nii.gz -o orig.mgz --in_orientation RAS -iis 1 -ijs 1 -iks 1
+
+    # Should give different subjid for each run or delete existing folder (or not use the -i option below...)
+    subjid=EDDY_20170524-2
+    recon-all -i orig.mgz -subjid $subjid -autorecon1 -skullstrip -no-wsgcaatlas -wsthresh 15 -notal-check -notalairach -clean-bm -gcut
+
+    # Lowering threshold will reduce the brain region, could be reduced further
+    #recon-all -i orig.mgz -subjid $subjid -autorecon1 -no-wsgcaatlas -wsthresh 20 -notal-check -notalairach
+
+    #recon-all -subjid $subjid -skullstrip -no-wsgcaatlas -wsthresh 15 -notal-check -notalairach -clean-bm -gcut
+
+    # Copy file from freesurfer subject directory to current directory
+    # will need to be modified, freesurfer must provide a better way to do this...
+    cp /big/freesurfer-subjects/$subjid/mri/brainmask.mgz .
+
+    # Return to original scale and coordinates
+    mri_convert -i brainmask.mgz -o brainmask.nii.gz --out_orientation RAS -iis 0.5 -ijs 0.5 -iks 0.5
+
+    # "-n" prevents overwritting (in my version)
+    cp -n brainmask.nii.gz brainmask.manual.nii.gz
+
+    # Convert into mask (0 or 255)
+    fslmaths brainmask.manual.nii.gz -bin -mul 255 brainmask.manual.nii.gz
+
+    # Edit with freeview
+    freeview T1_avg_nu.nii.gz brainmask.manual.nii.gz:colormap=Heat:opacity=0.4
 
