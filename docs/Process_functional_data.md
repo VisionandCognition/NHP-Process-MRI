@@ -95,7 +95,7 @@ High pass filter to match design.
 
 #### Process Behavior data / Create model
 
-For curve tracing, there is `calc_curvetracing_time_events.py` in the "bin" of this repository. This does not analyze the Eye traces.
+For curve tracing, run `calc_curvetracing_timeevents.py` in the `CurveTracing` directory (that contains the run00x). This does not analyze the Eye traces.
 
 For each EV (‘explanatory variable’) link a 3 column text file with the model (column 1: time of event, column 2: duration of event, column 3: value, choose 1 if this isn’t parametrically varied).
 I save these text files in the folder ‘model’. The stimulus is of course most important, but I also wrote some matlab scripts to create them for behavioral and eye parameters.
