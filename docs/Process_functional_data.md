@@ -49,7 +49,7 @@ High pass filter to match design.
 ### Pre-stats settings
 
 * Motion correction: MCFLIRT
-* B0 unwarping [✔]
+* B0 unwarping [optional] - Requires fitting using BBR, which usually doesn't seem to work
   * Fieldmap = the unwarped phase volume (B0_phase_unwrap.nii.gz)
   * Fieldmap mag = the brain extracted magnitude volume (B0_mag_ro_brain.nii.gz)
   * Effective EPI echo spacing = 0.5585 
@@ -66,12 +66,25 @@ High pass filter to match design.
 * High pass temporal filtering [✔]
 * Include a MELODIC ICA if that’s relevant for your question (will take longer to process)
 
-### Registration settings ###
+### Registration settings
 
-* Main structural: the high-res T1 (e.g. "YYYYMMDD/anat/T1/T1_avg_nu.nii.gz" should have corresponding "*_brain.nii.gz")
+* Main structural: the high-res T1 
 * You may need to check what registration method works best but here. BBR doesn’t always work great for monkeys (although it is required when using B0 unwarping).
 * Standard space: a template, e.g. the D99_template.nii.gz (Saleem & Logothetis atlas)
   * I’d go with 12 DOF here, but you can try nonlinear as well (takes longer and may give weird result, so always check your registrations)
+  
+#### From Chris Petkov's Recommendation
+
+* Expanded functional image
+  * Put in the average T1 from the same day (e.g. "YYYYMMDD/anat/T1/T1_avg_nu.nii.gz" should have corresponding "_brain.nii.gz")
+  * Normal search, 12 DOF (3 DOF also works, but 12 seems to adjust for some of the B0 warping?)
+* Main structural image 
+  * Put the high-res T1 of the subject
+  * Normal search, 9 DOF
+* Standard space
+  * NMT (my addition)
+  * Normal search, 9 or 12 DOF
+  * My computer runs out of memory if I try nonlinear fitting, although I think this should be done eventually.
 
 ### Stats
 
