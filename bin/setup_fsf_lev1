@@ -1,0 +1,74 @@
+#!/usr/bin/env python3
+
+# This script will run each subjects design.fsf
+
+import os
+import glob
+import sys
+from pathlib import Path
+import re
+from process_nhp_mri import make_fsf_designs
+
+
+def print_run(cmd):
+    print('%s\n' % cmd)
+    return os.system(cmd)
+
+def setup_fsf_lev1(fsf_ex_script, session_path):
+    script_dir = os.path.join(session_path, 'scripts')
+    fsf_lev1_dir = os.path.join(script_dir, 'fsf_lev1')
+    os.makedirs(fsf_lev1_dir, exist_ok=True)
+
+    # Get scan data from file name of session_path, last occurrence
+    for date_match in re.finditer(r'/(20\d\d\d\d\d\d)/', session_path):
+        pass
+    scan_date = date_match.group(1)
+
+    fsf_template_path = Path(os.path.join(fsf_lev1_dir, 'design_template.fsf'))
+
+    if fsf_template_path.exists():
+        print('Error: %s already exists, cowardly refusing to overwrite.' %
+              fsf_template_path)
+        return
+
+    with open(fsf_ex_script, 'r') as fi, fsf_template_path.open('w') as fo:
+        contents = fi.read()
+        contents = re.sub(r'^set fmri\(npts\) \d+$', r'set fmri(npts) NTPTS', contents)
+        contents = re.sub(r'\brun\d\d\d\b', r'runRUNNUM', contents)
+        # allow the example fsl script to be from another directory
+        contents = re.sub(r'\b20\d\d\d\d\d\d\b', scan_date, contents)
+        fo.write(contents)
+
+    print('Template written success!\n')
+
+    os.makedirs(os.path.join(fsf_lev1_dir, 'lev1'), exist_ok=True)
+    make_fsf_designs(session_path)
+    print('Individual run scripts created (I\'m guessing)!\n')
+    print('To continue, run the following:')
+    print('\trun_all_fsf_lev1 %s' % session_path)
+
+if __name__ == '__main__':
+    session_path = None
+    fsf_ex_script = None
+    if len(sys.argv) >= 2:
+        fsf_ex_script = sys.argv[1]
+
+        if len(sys.argv) == 2:
+            if not len(glob.glob('run???')):
+                print("No 'run0xx' directory found in current location.")
+            else:
+                session_path = os.getcwd()
+
+        elif len(sys.argv) == 3:
+            session_path = sys.argv[2]
+
+    if fsf_ex_script is not None and session_path is not None:
+        sys.exit(setup_fsf_lev1(fsf_ex_script, session_path))
+    else:
+        print("Syntax:")
+        print("\t%s fsf_script_file [session_path]")
+        print("\nWhere session_path is a directory"
+              " that contains run0xx directories.")
+        print("session_path is optional if the current"
+              " directory contains run0xx directories")
+

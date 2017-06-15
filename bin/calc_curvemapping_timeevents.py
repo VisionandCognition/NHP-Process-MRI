@@ -36,34 +36,46 @@ class Event(object):
 def process_events(events, stimparams):
 
     split_ev = {
-        'CurveUL': [], # When correct response
-        'CurveDL': [],
-        'CurveUR': [],
-        'CurveDR': [],
-        'CurveCenter': [],
-        'CurveIncorrect': [], # False hit / wrong hand
+        'BlankL': [],  # When correct response
+        'BlankR': [],  # When correct response
+#        'CurveSegL': [],  # When correct response
+#        'CurveSegR': [],
+        'CurveSegUL': [],
+        'CurveSegDL': [],
+        'CurveSegUR': [],
+        'CurveSegDR': [],
+        'GapL': [],  # When correct response
+        'GapR': [],
+        'GapUL': [],
+        'GapDL': [],
+        'GapUR': [],
+        'GapDR': [],
+        'CircleDiamondUL': [],  # When correct response
+        'CircleDiamondDL': [],
+        'CircleDiamondUR': [],
+        'CircleDiamondDR': [],
+        'CircleSquareUL': [],
+        'CircleSquareDL': [],
+        'CircleSquareUR': [],
+        'CircleSquareDR': [],
+        'CurveIncorrect': [],  # False hit / wrong hand
         'CurveNoResponse': [],
         'CurveFixationBreak': [],
-        'CurveNotCorrect': [], # Catch-all: Incorrect, NoResponse, Fix. Break
-        'ResponseCues': [],
+        'CurveNotCorrect': [],  # Catch-all: Incorrect, NoResponse, Fix. Break
         'HandLeft': [],
         'HandRight': [],
         'Reward': [],
-        'FixationTask': [],
-        'Fixating': [],
     }
 
     cur_stim = None
 
-    curve_target = None
     curve_stim_on = None
     curve_response = None
     curve_switched = False
 
     fixation_stim_on = None
-    response_cues_on = None
-    curr_state = None
     began_fixation = None
+    curr_state = None
     has_ManualRewardField = False
 
     mri_triggers = events[(events['event'] == 'MRI_Trigger') &
@@ -78,95 +90,87 @@ def process_events(events, stimparams):
             if curr_state == 'SWITCHED':
                 curve_switched = True
 
-        if event.event == 'Fixation':
-            if event.info == 'Out':
-                if began_fixation is not None:
-                    split_ev['Fixating'].append(Event(began_fixation, event.time_s))
-                began_fixation = None
-            else:
-                assert event.info == 'In', 'Unrecognized fixation event info "%s"' % event.info
-                began_fixation = event.time_s
-
         if event.event == 'NewStimulus':
             tsk = event.task.replace(' ', '')
             if tsk in stimparams.keys():
-                cur_stim = stimparams[tsk].iloc()
-            else:
-                cur_stim = None
+                cur_stim = [
+                    stimparams[tsk].iloc[int(event.info)]['LeftStim'],
+                    stimparams[tsk].iloc[int(event.info)]['RightStim']]
 
-        elif event.event == 'TargetLoc':
-            curve_target = event.info
+                if cur_stim[0] == 'None':
+                    cur_stim[0] = 'BlankL'
+                if cur_stim[1] == 'None':
+                    cur_stim[1] = 'BlankR'
+                if cur_stim[1] == 'CurveSegR':  # CurveSegX doesn't appear
+                    cur_stim[1] = 'BlankR'
+
+        elif event.event == 'StimulusKey:CombinedStim':
+            cur_stim = event.info.split('+')
+
+            if cur_stim[0] == 'None':
+                cur_stim[0] = 'BlankL'
+            if cur_stim[1] == 'None':
+                cur_stim[1] = 'BlankR'
+            if cur_stim[1] == 'CurveSegR':  # CurveSegX doesn't appear
+                cur_stim[1] = 'BlankR'
 
         elif event.event == 'NewState' and event.info == 'TRIAL_END':
             cur_stim = None
-            curve_target = None
             curve_stim_on = None
             curve_response = None
             curve_switched = False
-
             fixation_stim_on = None
-            response_cues_on = None
 
         elif event.event == 'NewState' and event.info == 'PRESWITCH':
-            assert curve_target is not None
             curve_stim_on = event.time_s
-
-            #if began_fixation is None: # if not fixating, call it a fixation break
-            #    curve_response = 'FixationBreak'
 
         elif (event.task == 'Fixation' and event.event == 'NewState' and
               event.info == 'FIXATION_PERIOD'):
             fixation_stim_on = event.time_s
 
-        elif (event.task == 'Fixation' and event.event == 'NewState' and
-              event.info == 'POSTFIXATION'):
-            split_ev['FixationTask'].append(Event(fixation_stim_on, event.time_s))
+        elif event.event == 'NewState' and event.info == 'POSTSWITCH':
 
-        elif event.event == 'NewState' and event.info == 'SWITCHED':
-            response_cues_on = event.time_s
-   
-        elif event.event == 'NewState' and (
-            event.info == 'POSTSWITCH') and (
-                event.task != 'Fixation'):
-
-            assert (event.task == 'Curve tracing' or
-                    event.task == 'Control CT' or
-                    event.task == 'Catch CT' or
-                    event.task == 'Keep busy')
-
+            assert (event.task == 'Curve Mapping' or
+                    event.task == 'No Stim Hand Response')
             assert curve_stim_on is not None
 
-            event_type = 'Curve%s' % curve_target
+            event_type = cur_stim
+
             if curve_response == 'INCORRECT':
-                event_type = 'CurveIncorrect' # Lump together incorrect trials
+                event_type = ['CurveIncorrect']
 
             elif curve_response is None:
                 if curve_switched:
-                    event_type = 'CurveNoResponse' # Lump together incorrect trials
+                    event_type = ['CurveNoResponse']
                 else:
-                    event_type = 'CurveFixationBreak' # Lump together incorrect trials
+                    event_type = ['CurveFixationBreak']
 
             elif curve_response == 'FixationBreak':
-                event_type = 'CurveFixationBreak' # Lump together incorrect trials
+                event_type = ['CurveFixationBreak']
 
             else:
                 assert curve_response == 'CORRECT', (
                     'Unhandled curve_response %s' % curve_response)
 
-            split_ev[event_type].append(Event(curve_stim_on, event.time_s))
-            if (event_type == 'CurveIncorrect' or 
-                    event_type == 'CurveNoResponse' or 
-                    event_type == 'CurveFixationBreak'):
-                split_ev['CurveNotCorrect'].append(Event(curve_stim_on, event.time_s))
+            for evtype in event_type:
+                split_ev[evtype].append(Event(curve_stim_on, event.time_s))
 
-            if response_cues_on is not None:
-                split_ev['ResponseCues'].append(Event(response_cues_on, event.time_s))
+                # CurveNotCorrect event is a renaming / generalization of the
+                #   wrong response types
+                if (evtype == 'CurveIncorrect' or
+                        evtype == 'CurveNoResponse' or
+                        evtype == 'CurveFixationBreak'):
+                    split_ev['CurveNotCorrect'].append(Event(curve_stim_on,
+                                                             event.time_s))
 
         elif event.event == 'ResponseGiven' and curve_response is None:
             curve_response = event.info
 
-        # elif event.event == 'Fixation' and event.info == 'Out' and curve_response is None:
-        #    curve_response = 'FixationBreak'
+        # It seems that the following may create more fixation breaks than
+        #    what is reasonable.
+        # elif (event.event == 'Fixation' and event.info == 'Out' and
+        #       curve_response is None):
+        #     curve_response = 'FixationBreak'
 
         elif event.event == 'Response_Initiate':
             split_ev['Hand%s' % event.info].append(Event(event.time_s))
@@ -183,8 +187,8 @@ def process_events(events, stimparams):
         elif event.event == 'Reward' and event.info == 'Manual':
             split_ev['Reward'].append(Event(event.time_s, dur_s=0.04))
             assert not has_ManualRewardField, (
-                   "Event log should not have ('Reward','Manual') "
-                   "entry if it has ('ManualReward') entry.")
+                "Event log should not have ('Reward','Manual') "
+                "entry if it has ('ManualReward') entry.")
 
     return split_ev
 
@@ -218,7 +222,7 @@ def main(session_path, beh_paths=None):
             stim_params = dict()
             for stim_csv in glob.iglob('%s/*.stimulus-params.csv' %
                                        task_group_path):
-                m = re.match(r'(.*)\.stimulus-params\.csv',
+                m = re.match(r'.*_([^_]*)\.stimulus-params\.csv',
                              os.path.split(stim_csv)[1])
 
                 assert m  # if matches glob.iglob, should match with re.match
@@ -303,6 +307,8 @@ if __name__ == '__main__':
     else:
         print("Syntax:")
         print("\t%s [session_path] [behavior_paths]")
-        print("\nWhere session_path is a directory that contains run0xx directories.")
-        print("session_path is optional if the current directory contains run0xx directories")
+        print("\nWhere session_path is a directory that contains"
+              " run0xx directories.")
+        print("session_path is optional if the current directory "
+              "contains run0xx directories")
         print("behavior_paths by default is all the run0xx directories.")

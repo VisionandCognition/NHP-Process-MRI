@@ -1,0 +1,22 @@
+#!/usr/bin/env python3
+
+# This script will run each subjects design.fsf
+
+import os
+import glob
+import sys
+
+def print_run(cmd):
+    print('%s\n' % cmd)
+    return os.system(cmd)
+
+if __name__ == '__main__':
+    session_path = None
+    if len(sys.argv) == 1:
+        print_run('mkdir -p MRI/xnat')
+        print_run('mkdir -p Behavior')
+        print_run('mkdir -p Eye')
+    if len(sys.argv) == 2:
+        print_run('mkdir -p "%s/MRI/xnat"' % sys.argv[1])
+        print_run('mkdir -p "%s/Behavior"' % sys.argv[1])
+        print_run('mkdir -p "%s/Eye"' % sys.argv[1])

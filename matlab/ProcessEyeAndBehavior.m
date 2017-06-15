@@ -6,7 +6,7 @@ function ProcessEyeAndBehavior
 
 %% datapaths ---------------------------------------
 monkey = 'EDDY'; % all caps
-sess_date = '20170511/CurveTracing'; %yyyymmdd
+sess_date = '20170524/CurveTracing'; %yyyymmdd
 
 % NB! proper logging info is available for 20160721 and later
 % =====================================
@@ -141,8 +141,8 @@ end
 
 %% Eye trace from ISCAN log ------------------------
 if DoEye
-    for r=1:size(eye,1)
-        for rr=1:size(eye,2)
+    for r=1:size(eye,1) % run
+        for rr=1:size(eye,2) % ?
             % eye trace from tracker log
             tracker_eye{r,rr}=[];
             for i = 1:length(beh(r,rr).Log.Eye)
