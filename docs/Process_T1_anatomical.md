@@ -1,9 +1,10 @@
 Processing the T1 anatomical
 ----------------------------
 
-The standard location for T1 data is `/NHP_MRI/Data_proc/SUBJ/DATE/anat/T1`. An example script for running the below is at: `/NHP_MRI/Data_proc/EDDY/20170314/anat/T1/process_T1.sh` (more recent: [process-t1.sh](https://gist.github.com/williford/92d75962567404239574539104a2d1e1)).
+The standard location for T1 data is `/NHP_MRI/Data_proc/SUBJ/DATE/anat/T1`. Example scripts are at: `/NHP_MRI/Data_proc/EDDY/20170614/anat/T1/process_t1-step*.sh`.
 
 ### Pre-processing
+
 
 If you are combining different types of T1's, use something like the following:
 
