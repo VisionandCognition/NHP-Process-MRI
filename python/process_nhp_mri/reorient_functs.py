@@ -25,7 +25,7 @@ def reorient_functs(session_path):
             if len(nii_files) == 1:
                 print_run('ln -s "%s" "%s"' % (nii_files[0], bold_path))
             else:
-                print('%s file not found but there were multiple ' +
+                print('ERROR! %s file not found but there were multiple ' +
                       '(or no) nifti files.' % bold_path)
 
         # re-orient sphinx and reslice to 1mm isotropic voxels
@@ -35,5 +35,5 @@ def reorient_functs(session_path):
 
         # re-orient to standard
         print_run("fslreorient2std %s %s" %
-                  (os.path.join(cur_run, ro_bold), 
+                  (os.path.join(cur_run, ro_bold),
                    os.path.join(cur_run, ro2st_bold)))

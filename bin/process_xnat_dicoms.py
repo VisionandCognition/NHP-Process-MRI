@@ -16,10 +16,12 @@ import sys
 import subprocess
 import pdb
 
+
 def system(cmd):
     print(cmd)
     result = subprocess.check_output(cmd, shell=True)
     return result.decode('utf-8').splitlines()
+
 
 def process_xnat_dicoms(xnat_dir, nii_output='NII'):
     # using find command inside python is pretty bad ...

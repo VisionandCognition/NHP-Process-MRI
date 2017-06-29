@@ -14,13 +14,14 @@ def print_run(cmd):
     print('%s\n' % cmd)
     return os.system(cmd)
 
+
 def setup_fsf_lev1(fsf_ex_script, session_path):
     script_dir = os.path.join(session_path, 'scripts')
     fsf_lev1_dir = os.path.join(script_dir, 'fsf_lev1')
     os.makedirs(fsf_lev1_dir, exist_ok=True)
 
     # Get scan data from file name of session_path, last occurrence
-    for date_match in re.finditer(r'/(20\d\d\d\d\d\d)/', session_path):
+    for date_match in re.finditer(r'/(20\d\d\d\d\d\d)(?:/|$)', session_path):
         pass
     scan_date = date_match.group(1)
 
@@ -33,7 +34,9 @@ def setup_fsf_lev1(fsf_ex_script, session_path):
 
     with open(fsf_ex_script, 'r') as fi, fsf_template_path.open('w') as fo:
         contents = fi.read()
-        contents = re.sub(r'^set fmri\(npts\) \d+$', r'set fmri(npts) NTPTS', contents)
+        contents = re.sub(r'^set fmri\(npts\) \d+$',
+                          r'set fmri(npts) NTPTS', contents,
+                          flags=re.MULTILINE)
         contents = re.sub(r'\brun\d\d\d\b', r'runRUNNUM', contents)
         # allow the example fsl script to be from another directory
         contents = re.sub(r'\b20\d\d\d\d\d\d\b', scan_date, contents)
@@ -71,4 +74,3 @@ if __name__ == '__main__':
               " that contains run0xx directories.")
         print("session_path is optional if the current"
               " directory contains run0xx directories")
-
