@@ -18,12 +18,17 @@ def make_fsf_designs(session_path):
         runnum = splitdir_run[-3:]
         print(runnum)
 
-        ntime = os.popen('fslnvols %s/fois.nii.gz' % (dir)).read().rstrip()
+        try:
+            ntime = os.popen('fslnvols %s/fois_roi.nii.gz' %
+                             (dir)).read().rstrip()
+        except:
+            ntime = os.popen('fslnvols %s/fois.nii.gz' % (dir)).read().rstrip()
+
         replacements = {'NTPTS': ntime, 'RUNNUM': runnum}
         with open("%s/%s" % (fsfdir, fsf_templ)) as infile:
-             with open("%s/%s/design_run%s.fsf" %
-                       (fsfdir, fsf_folder, runnum), 'w') as outfile:
-                 contents = infile.read()
-                 for src, target in replacements.items():
+            with open("%s/%s/design_run%s.fsf" %
+                      (fsfdir, fsf_folder, runnum), 'w') as outfile:
+                contents = infile.read()
+                for src, target in replacements.items():
                     contents = contents.replace(src, target)
-                 outfile.write(contents)
+                outfile.write(contents)

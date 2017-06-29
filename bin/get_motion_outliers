@@ -19,12 +19,9 @@ def mkdir_p(path):
             raise
 
 
-def preprocess_all(session_path):
+def get_motion_outliers(session_path, fois_glob):
     mkdir_p("%s/QA" % session_path)
-    nhp.reorient_functs(session_path)
-
-    # you can also run "get_motion_outliers"
-    nhp.get_motion_outliers(session_path)
+    nhp.get_motion_outliers(session_path, fois_glob=fois_glob)
 
 
 if __name__ == '__main__':
@@ -34,15 +31,22 @@ if __name__ == '__main__':
             print "No 'run0xx' directory found in current location."
         else:
             session_path = os.getcwd()
-    elif len(sys.argv) == 2:
+    elif len(sys.argv) >= 2:
         session_path = sys.argv[1]
 
+    if len(sys.argv) >= 3:
+        fois_glob = sys.argv[2]
+    else:
+        fois_glob = 'fois*.nii.gz'
+
     if session_path is not None:
-        sys.exit(preprocess_all(session_path))
+        sys.exit(get_motion_outliers(session_path, fois_glob))
     else:
         print("Syntax:")
-        print("\t%s [session_path]")
+        print("\t%s [session_path] [fois_file_pattern]")
         print("\nWhere session_path is a directory that contains "
               "run0xx directories.")
         print("session_path is optional if the current directory "
               "contains run0xx directories")
+        print("fois_file_pattern can be, for example: fois*.nii.gz, "
+              "fois.nii.gz, or fois_roi.nii.gz")

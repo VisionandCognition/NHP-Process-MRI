@@ -9,6 +9,8 @@ import itertools
 import pdb
 import errno
 
+import subprocess
+
 
 def mkdir_p(path):
     try:
@@ -36,24 +38,25 @@ class Event(object):
 def process_events(events, stimparams):
 
     split_ev = {
-        'CurveUL': [], # When correct response
+        'CurveUL': [],  # When correct response
         'CurveDL': [],
         'CurveUR': [],
         'CurveDR': [],
         'CurveCenter': [],
-        'CurveIncorrect': [], # False hit / wrong hand
+        'CurveIncorrect': [],  # False hit / wrong hand
         'CurveNoResponse': [],
         'CurveFixationBreak': [],
-        'CurveNotCorrect': [], # Catch-all: Incorrect, NoResponse, Fix. Break
-        'ResponseCues': [],
+        'CurveNotCorrect': [],  # Catch-all: Incorrect, NoResponse, Fix. Break
+
+        'PreSwitchCurves': [],  # All PreSwitch displays with Curves & targets
+        'ResponseCues': [],  # All response cues events, unless
+                             # subject is not fixating at all
         'HandLeft': [],
         'HandRight': [],
         'Reward': [],
         'FixationTask': [],
         'Fixating': [],
     }
-
-    cur_stim = None
 
     curve_target = None
     curve_stim_on = None
@@ -81,24 +84,18 @@ def process_events(events, stimparams):
         if event.event == 'Fixation':
             if event.info == 'Out':
                 if began_fixation is not None:
-                    split_ev['Fixating'].append(Event(began_fixation, event.time_s))
+                    split_ev['Fixating'].append(
+                        Event(began_fixation, event.time_s))
                 began_fixation = None
             else:
-                assert event.info == 'In', 'Unrecognized fixation event info "%s"' % event.info
+                assert event.info == 'In', (
+                    'Unrecognized fixation event info "%s"' % event.info)
                 began_fixation = event.time_s
 
-        if event.event == 'NewStimulus':
-            tsk = event.task.replace(' ', '')
-            if tsk in stimparams.keys():
-                cur_stim = stimparams[tsk].iloc()
-            else:
-                cur_stim = None
-
-        elif event.event == 'TargetLoc':
+        if event.event == 'TargetLoc':
             curve_target = event.info
 
         elif event.event == 'NewState' and event.info == 'TRIAL_END':
-            cur_stim = None
             curve_target = None
             curve_stim_on = None
             curve_response = None
@@ -111,20 +108,18 @@ def process_events(events, stimparams):
             assert curve_target is not None
             curve_stim_on = event.time_s
 
-            #if began_fixation is None: # if not fixating, call it a fixation break
-            #    curve_response = 'FixationBreak'
-
         elif (event.task == 'Fixation' and event.event == 'NewState' and
               event.info == 'FIXATION_PERIOD'):
             fixation_stim_on = event.time_s
 
         elif (event.task == 'Fixation' and event.event == 'NewState' and
               event.info == 'POSTFIXATION'):
-            split_ev['FixationTask'].append(Event(fixation_stim_on, event.time_s))
+            split_ev['FixationTask'].append(
+                Event(fixation_stim_on, event.time_s))
 
         elif event.event == 'NewState' and event.info == 'SWITCHED':
             response_cues_on = event.time_s
-   
+
         elif event.event == 'NewState' and (
             event.info == 'POSTSWITCH') and (
                 event.task != 'Fixation'):
@@ -136,36 +131,44 @@ def process_events(events, stimparams):
 
             assert curve_stim_on is not None
 
+            split_ev['PreSwitchCurves'].append(
+                Event(curve_stim_on, event.time_s))
+
             event_type = 'Curve%s' % curve_target
             if curve_response == 'INCORRECT':
-                event_type = 'CurveIncorrect' # Lump together incorrect trials
+                event_type = 'CurveIncorrect'
 
             elif curve_response is None:
                 if curve_switched:
-                    event_type = 'CurveNoResponse' # Lump together incorrect trials
+                    event_type = 'CurveNoResponse'
                 else:
-                    event_type = 'CurveFixationBreak' # Lump together incorrect trials
+                    event_type = 'CurveFixationBreak'
 
             elif curve_response == 'FixationBreak':
-                event_type = 'CurveFixationBreak' # Lump together incorrect trials
+                event_type = 'CurveFixationBreak'
 
             else:
                 assert curve_response == 'CORRECT', (
                     'Unhandled curve_response %s' % curve_response)
 
             split_ev[event_type].append(Event(curve_stim_on, event.time_s))
-            if (event_type == 'CurveIncorrect' or 
-                    event_type == 'CurveNoResponse' or 
+            if (event_type == 'CurveIncorrect' or
+                    event_type == 'CurveNoResponse' or
                     event_type == 'CurveFixationBreak'):
-                split_ev['CurveNotCorrect'].append(Event(curve_stim_on, event.time_s))
+                split_ev['CurveNotCorrect'].append(
+                    Event(curve_stim_on, event.time_s))
 
             if response_cues_on is not None:
-                split_ev['ResponseCues'].append(Event(response_cues_on, event.time_s))
+                # regardless of whether it is correct or not
+                # TODO: should not add if eyes are closed
+                split_ev['ResponseCues'].append(Event(response_cues_on,
+                                                      event.time_s))
 
         elif event.event == 'ResponseGiven' and curve_response is None:
             curve_response = event.info
 
-        # elif event.event == 'Fixation' and event.info == 'Out' and curve_response is None:
+        # elif event.event == 'Fixation' and event.info == 'Out'
+        #  and curve_response is None:
         #    curve_response = 'FixationBreak'
 
         elif event.event == 'Response_Initiate':
@@ -183,10 +186,12 @@ def process_events(events, stimparams):
         elif event.event == 'Reward' and event.info == 'Manual':
             split_ev['Reward'].append(Event(event.time_s, dur_s=0.04))
             assert not has_ManualRewardField, (
-                   "Event log should not have ('Reward','Manual') "
-                   "entry if it has ('ManualReward') entry.")
+                "Event log should not have ('Reward','Manual') "
+                "entry if it has ('ManualReward') entry.")
 
-    return split_ev
+    end_time_s = events.iloc[len(events) - 1]['time_s']
+
+    return (split_ev, end_time_s)
 
 
 def main(session_path, beh_paths=None):
@@ -195,23 +200,29 @@ def main(session_path, beh_paths=None):
         beh_paths.sort()
 
     for cur_beh in beh_paths:
-        run_path = os.path.dirname(os.path.abspath(cur_beh))
-        run = os.path.split(run_path)[1]
-        assert len(run), "Could not process behavior directory %s" % cur_beh
+        try:
+            run_path = os.path.dirname(os.path.abspath(cur_beh))
+            run = os.path.split(run_path)[1]
+            assert len(run), ("Could not process behavior directory %s" %
+                              cur_beh)
 
-        beh_dir = os.path.join(session_path, run, 'behavior')
-        if not os.path.isdir(cur_beh):
-            print('Path not found for %s: %s' % (run, cur_beh))
-            continue
+            beh_dir = os.path.join(session_path, run, 'behavior')
+            if not os.path.isdir(cur_beh):
+                print('Path not found for %s: %s' % (run, cur_beh))
+                continue
 
-        print('\nProcessing behavior of %s.' % run)
+            print('---------------------------------')
+            print('\nProcessing behavior of %s.' % run)
 
-        split_events = None
-        task_dirs = glob.glob('%s/*/' % (beh_dir))
-        assert len(task_dirs), 'The behavior directory %s should have at' \
-            ' least one subdirectory'
+            split_events = None
+            task_dirs = glob.glob('%s/*/' % (beh_dir))
+            assert len(task_dirs), 'The behavior directory %s should have at' \
+                ' least one subdirectory'
 
-        for task_group_path in glob.iglob('%s/*/' % (beh_dir)):
+            task_group_paths = glob.glob('%s/*/' % (beh_dir))
+            assert len(task_group_paths) == 1
+            task_group_path = task_group_paths[0]
+
             print(task_group_path)
 
             # Read stimulus parameter files
@@ -248,7 +259,30 @@ def main(session_path, beh_paths=None):
                 'Events need to be merged before '
                 'multiple task groups are handled.')
 
-            split_events = process_events(events, stim_params)
+            (split_events, end_time_s) = process_events(events, stim_params)
+
+            TR = float(subprocess.check_output([
+                'fslval',
+                '%s/funct/fois.nii.gz' % run_path,
+                'pixdim4'
+            ]))
+            nvols = int(subprocess.check_output([
+                'fslnvols',
+                '%s/funct/fois.nii.gz' % run_path
+            ]))
+
+            nvols_roi = min(
+                int(end_time_s / TR),
+                nvols)
+
+            cmd = [
+                'fslroi',
+                '%s/funct/fois.nii.gz' % run_path,
+                '%s/funct/fois_roi.nii.gz' % run_path,
+                '0',
+                '%d' % nvols_roi]
+            print(' '.join(cmd))
+            subprocess.call(cmd)
 
             mkdir_p(os.path.join(run_path, 'model'))
 
@@ -260,25 +294,10 @@ def main(session_path, beh_paths=None):
                     for ev in task_events:
                         f.write('%03f\t%f\t%d\n' %
                                 (ev.time_s, ev.dur_s, ev.event_num))
-
-            # for log_csv in glob.iglob('%s/Log_*.csv' % task_group_path):
-            #     m = re.match(r'Log_.*_\d+T\d+_([^_]*)\.csv',
-            #                  os.path.split(log_csv)[1])
-
-            #     if not m:
-            #         print('The filename %s was not in expected format,'
-            #               ' skipping.' %
-            #               os.path.split(log_csv)[1])
-            #         continue
-
-            #     task = m.group(1).replace('_', '')
-
-            #     log = pd.read_csv(log_csv)
-
-            #     if task in stim_params.keys():
-            #         process(log, stim_params[task])
-            #     import pdb
-            #     pdb.set_trace()
+        except Exception as e:
+            print("\n\nError processing %s:" % cur_beh)
+            print(str(e))
+            print("\n\n")
 
 
 if __name__ == '__main__':
@@ -303,6 +322,8 @@ if __name__ == '__main__':
     else:
         print("Syntax:")
         print("\t%s [session_path] [behavior_paths]")
-        print("\nWhere session_path is a directory that contains run0xx directories.")
-        print("session_path is optional if the current directory contains run0xx directories")
+        print("\nWhere session_path is a directory that contains "
+              "run0xx directories.")
+        print("session_path is optional if the current directory "
+              "contains run0xx directories")
         print("behavior_paths by default is all the run0xx directories.")
