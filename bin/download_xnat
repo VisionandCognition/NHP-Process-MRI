@@ -1,0 +1,47 @@
+#!/usr/bin/env python
+
+from pyxnat import Interface
+import argparse
+import os
+import pdb
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='XNat session downloader')
+    parser.add_argument('subj', type=str,
+                        help='xnat subject')
+
+    parser.add_argument('-d', '--dest', type=str, nargs='?',
+                        default='MRI/xnat',
+                        help='Download destionation')
+    parser.add_argument('--config', type=str, nargs='?',
+                        default='~/.spinoza.cfg',
+                        help='Location of server credientials file.')
+    parser.add_argument('--proj', type=str, nargs='?',
+                        default='NHP-DBS',
+                        help='xnat project')
+
+    args = parser.parse_args()
+
+    config = os.path.expanduser(args.config)
+
+    try:
+        xnat = Interface(config=config, cachedir='/tmp')
+    except:
+        xnat = Interface(server='https://ftpsc.spinozacentre.org/xnat',
+                         cachedir='/tmp')
+        xnat.save_config(config)
+
+    proj = xnat.select.project(args.proj)
+    assert proj.exists()
+    subj = proj.subject(args.subj)
+    assert subj.exists()
+
+    for exper in subj.experiments():
+        exper.scans().download(args.dest, extract=True)
+
+    print("You may want to run the following:")
+    print("  mkdir -p MRI/NII")
+    print("  find xnat -name '*.nii.gz' -exec cp {} NII \;")
+    print("")
+    print("Then you may want to create a copy-to-proc.sh script.")
