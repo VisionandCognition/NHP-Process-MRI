@@ -28,7 +28,7 @@ if __name__ == '__main__':
     try:
         xnat = Interface(config=config, cachedir='/tmp')
     except:
-        xnat = Interface(server='https://ftpsc.spinozacentre.org/xnat',
+        xnat = Interface(server='https://ftpsc.spinozacentre.nl/xnat',
                          cachedir='/tmp')
         xnat.save_config(config)
 
