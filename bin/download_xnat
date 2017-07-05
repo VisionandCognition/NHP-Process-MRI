@@ -37,8 +37,12 @@ if __name__ == '__main__':
     subj = proj.subject(args.subj)
     assert subj.exists()
 
+    print("Succesfully contacted XNAT. Downloading now...")
+
     for exper in subj.experiments():
         exper.scans().download(args.dest, extract=True)
+
+    print("Download finished.")
 
     print("You may want to run the following:")
     print("  mkdir -p MRI/NII")
