@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/env python3
 
 import glob
 import os
@@ -9,7 +9,9 @@ import process_nhp_mri as nhp
 
 
 def mkdir_p(path):
-    """ http://stackoverflow.com/questions/600268/mkdir-p-functionality-in-python """
+    """ http://stackoverflow.com/questions/600268/
+            mkdir-p-functionality-in-python
+    """
     try:
         os.makedirs(path)
     except OSError as exc:  # Python >2.5
@@ -31,7 +33,7 @@ if __name__ == '__main__':
     session_path = None
     if len(sys.argv) == 1:
         if not len(glob.glob('run???')):
-            print "No 'run0xx' directory found in current location."
+            print("No 'run0xx' directory found in current location.")
         else:
             session_path = os.getcwd()
     elif len(sys.argv) == 2:
