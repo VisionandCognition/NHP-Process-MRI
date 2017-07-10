@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-This script processes the DICOMS from the XNAT server. To use, add the 
-Process-NHP-MRI/bin directory to your PATH variable. You can then go to the directory
-you downloaded the XNAT DICOMS and run:
+This script processes the DICOMS from the XNAT server. To use, add the
+Process-NHP-MRI/bin directory to your PATH variable. You can then go to the
+directory you downloaded the XNAT DICOMS and run:
 
     process_xnat_dicoms.py xnat [NII]
 
