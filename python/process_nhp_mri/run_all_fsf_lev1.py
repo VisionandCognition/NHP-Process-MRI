@@ -13,9 +13,9 @@ def run_feat(fsf_file):
     print_run("feat %s" % fsf_file)
 
 
-def run_all_fsf_lev1(session_path, njobs=None):
+def run_all_fsf_lev1(session_path, njobs=None, fsf_dir='fsf_lev1'):
     if njobs is None:
-        njobs_envvar = 'FSL_LEV1_NJOBS' 
+        njobs_envvar = 'FSL_LEV1_NJOBS'
         if njobs_envvar in os.environ.keys():
             njobs = int(os.environ[njobs_envvar])
         else:
@@ -23,7 +23,7 @@ def run_all_fsf_lev1(session_path, njobs=None):
             print("Running %d jobs at once. Set %s environment"
                   " variable to overwrite." % (njobs, njobs_envvar))
 
-    fsfdir = "%s/scripts/fsf_lev1" % (session_path)
+    fsfdir = "%s/scripts/%s" % (session_path, fsf_dir)
 
     fsffiles = glob.glob("%s/lev1/design_run[0-9][0-9][0-9].fsf" % (fsfdir))
 

@@ -4,8 +4,8 @@ import os
 import glob
 
 
-def make_fsf_designs(session_path):
-    fsfdir = "%s/scripts/fsf_lev1" % (session_path)
+def make_fsf_designs(session_path, fsf_dir='fsf_lev1'):
+    fsfdir = "%s/scripts/%s" % (session_path, fsf_dir)
     fsf_templ = 'design_template.fsf'
     fsf_folder = 'lev1'
 
