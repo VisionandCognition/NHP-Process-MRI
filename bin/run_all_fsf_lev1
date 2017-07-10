@@ -5,27 +5,25 @@
 import os
 import glob
 import sys
+import argparse
 
 from process_nhp_mri import run_all_fsf_lev1
 
 
 if __name__ == '__main__':
-    session_path = None
-    if len(sys.argv) == 1:
-        if not len(glob.glob('run???')):
-            print("No 'run0xx' directory found in current location.")
-        else:
-            session_path = os.getcwd()
+    parser = argparse.ArgumentParser(description="Runs all lev1 FSF designs")
+    parser.add_argument('-p', '--session-path', type=str,
+                        default=os.getcwd())
+    parser.add_argument('--fsf-dir',
+                        default='fsf_lev1',
+                        help='The directory under "scripts" to save designs.')
 
-    elif len(sys.argv) == 2:
-        session_path = sys.argv[1]
+    args = parser.parse_args()
 
-    if session_path is not None:
-        sys.exit(run_all_fsf_lev1(session_path))
-    else:
-        print("Syntax:")
-        print("\t%s [session_path]")
-        print("\nWhere session_path is a directory"
-              " that contains run0xx directories.")
-        print("session_path is optional if the current"
-              " directory contains run0xx directories")
+    session_path = args.session_path
+    fsf_dir = args.fsf_dir
+
+    if not len(glob.glob(os.path.join(session_path, 'run???'))):
+        print("No 'run0xx' directory found in current location.")
+
+    sys.exit(run_all_fsf_lev1(session_path, fsf_dir=fsf_dir))
