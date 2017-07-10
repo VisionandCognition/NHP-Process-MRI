@@ -1,13 +1,13 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import os
 import sys
 import glob
 import re
 import pandas as pd
-import itertools
 
 import pdb
 import errno
+import subprocess
 
 
 def mkdir_p(path):
@@ -53,6 +53,7 @@ def process_events(events, stimparams):
         'HandRight': [],
         'Reward': [],
     }
+    last_correct_s = -15
 
     cur_stim = None
     cur_stim_on = None
@@ -119,6 +120,7 @@ def process_events(events, stimparams):
                 is_correct = False
 
             else:
+                last_correct_s = event.time_s
                 assert cur_response == 'CORRECT', (
                     'Unhandled cur_response %s' % cur_response)
 
@@ -161,7 +163,11 @@ def process_events(events, stimparams):
                 "Event log should not have ('Reward','Manual') "
                 "entry if it has ('ManualReward') entry.")
 
-    return split_ev
+    end_time_s = min(
+        last_correct_s + 15,
+        events.iloc[len(events) - 1]['time_s'])
+
+    return (split_ev, end_time_s)
 
 
 def main(session_path, beh_paths=None):
@@ -209,7 +215,7 @@ def main(session_path, beh_paths=None):
                        not None for log in csv_logs]
 
             event_log = [log for log, match in
-                         itertools.izip(csv_logs, matches) if match]
+                         zip(csv_logs, matches) if match]
             assert len(event_log) != 0, (
                 "There were no matching event logs in %s" % task_group_path)
             assert len(event_log) <= 1, (
@@ -223,7 +229,30 @@ def main(session_path, beh_paths=None):
                 'Events need to be merged before '
                 'multiple task groups are handled.')
 
-            split_events = process_events(events, stim_params)
+            (split_events, end_time_s) = process_events(events, stim_params)
+
+            TR = float(subprocess.check_output([
+                'fslval',
+                '%s/funct/fois.nii.gz' % run_path,
+                'pixdim4'
+            ]))
+            nvols = int(subprocess.check_output([
+                'fslnvols',
+                '%s/funct/fois.nii.gz' % run_path
+            ]))
+
+            nvols_roi = min(
+                int(end_time_s / TR),
+                nvols)
+
+            cmd = [
+                'fslroi',
+                '%s/funct/fois.nii.gz' % run_path,
+                '%s/funct/fois_roi.nii.gz' % run_path,
+                '0',
+                '%d' % nvols_roi]
+            print(' '.join(cmd))
+            subprocess.call(cmd)
 
             mkdir_p(os.path.join(run_path, 'model'))
 
@@ -262,7 +291,7 @@ if __name__ == '__main__':
     if len(sys.argv) <= 2 and len(glob.glob('run???')):
         session_path = os.getcwd()
     else:
-        print "No 'run0xx' directory found in current location."
+        print("No 'run0xx' directory found in current location.")
 
     if len(sys.argv) == 2:
         if session_path is None:
