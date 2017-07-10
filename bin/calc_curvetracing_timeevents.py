@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import os
 import sys
 import glob
@@ -57,6 +57,7 @@ def process_events(events, stimparams):
         'FixationTask': [],
         'Fixating': [],
     }
+    last_correct_s = -15
 
     curve_target = None
     curve_stim_on = None
@@ -148,6 +149,7 @@ def process_events(events, stimparams):
                 event_type = 'CurveFixationBreak'
 
             else:
+                last_correct_s = event.time_s
                 assert curve_response == 'CORRECT', (
                     'Unhandled curve_response %s' % curve_response)
 
@@ -189,7 +191,10 @@ def process_events(events, stimparams):
                 "Event log should not have ('Reward','Manual') "
                 "entry if it has ('ManualReward') entry.")
 
-    end_time_s = events.iloc[len(events) - 1]['time_s']
+    end_time_s = min(
+        last_correct_s + 15,
+        events.iloc[len(events) - 1]['time_s'])
+    # end_time_s = events.iloc[len(events) - 1]['time_s']
 
     return (split_ev, end_time_s)
 
