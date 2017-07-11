@@ -7,7 +7,11 @@ import pdb
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='XNat session downloader')
+    parser = argparse.ArgumentParser(
+        description='XNat session downloader. '
+        'Run from Data_raw/SUBJ/YYYYMMDD/. '
+        'You can use pmri_setup_raw_dir to setup new '
+        'directories for a new session.')
     parser.add_argument('subj', type=str,
                         help='xnat subject')
 
@@ -46,6 +50,6 @@ if __name__ == '__main__':
 
     print("You may want to run the following:")
     print("  mkdir -p MRI/NII")
-    print("  find xnat -name '*.nii.gz' -exec cp {} NII \;")
+    print("  find MRI/xnat -name '*.nii.gz' -exec cp {} NII \;")
     print("")
     print("Then you may want to create a copy-to-proc.sh script.")
