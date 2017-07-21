@@ -14,6 +14,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Runs all lev1 FSF designs")
     parser.add_argument('-p', '--session-path', type=str,
                         default=os.getcwd())
+    parser.add_argument('-n', '--num-jobs', type=int,
+                        default=None,
+                        help='Number of jobs to run in parallel. '
+                             'Default is FSL_LEV1_NJOBS environment variable.')
     parser.add_argument('--fsf-dir',
                         default='fsf_lev1',
                         help='The directory under "scripts" to save designs.')
@@ -24,6 +28,7 @@ if __name__ == '__main__':
     fsf_dir = args.fsf_dir
 
     if not len(glob.glob(os.path.join(session_path, 'run???'))):
-        print("No 'run0xx' directory found in current location.")
+        print("No 'run0xx' directory found in %s." % session_path)
 
-    sys.exit(run_all_fsf_lev1(session_path, fsf_dir=fsf_dir))
+    sys.exit(run_all_fsf_lev1(session_path, fsf_dir=fsf_dir,
+                              njobs=args.num_jobs))
