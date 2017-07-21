@@ -303,6 +303,9 @@ def main(session_path, beh_paths=None):
             print(str(e))
             print("\n\n")
 
+    print('You may now want to run:')
+    print('\tpmri_get_motion_outliers . fois_roi.nii.gz')
+
 
 if __name__ == '__main__':
     session_path = None

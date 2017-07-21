@@ -6,6 +6,7 @@ import os
 import glob
 import sys
 
+
 def print_run(cmd):
     print('%s\n' % cmd)
     return os.system(cmd)
@@ -20,3 +21,11 @@ if __name__ == '__main__':
         print_run('mkdir -p "%s/MRI/xnat"' % sys.argv[1])
         print_run('mkdir -p "%s/Behavior"' % sys.argv[1])
         print_run('mkdir -p "%s/Eye"' % sys.argv[1])
+
+        print("To move Behavior data from USB, try something like:")
+        print("\tfind /media/jonathan/0A1E-0594/Data/ -name "
+              "\"Eddy_*StimSettings*20170719*.[0-9][0-9]\" "
+              "-exec mv {} Behavior \;")
+        print("\nAnd for the eye data:")
+        print("find /media/jonathan/0A1E-0594/Data/ -name "
+              "\"Eddy_20170719*.tda\" -exec mv {} Eye \;")

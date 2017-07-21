@@ -17,7 +17,7 @@ if __name__ == '__main__':
 
     parser.add_argument('-d', '--dest', type=str, nargs='?',
                         default='MRI/xnat',
-                        help='Download destionation')
+                        help='Download destination')
     parser.add_argument('--config', type=str, nargs='?',
                         default='~/.spinoza.cfg',
                         help='Location of server credientials file.')
@@ -48,8 +48,17 @@ if __name__ == '__main__':
 
     print("Download finished.")
 
-    print("You may want to run the following:")
+    if args.dest == 'MRI/xnat':
+        print("You may want to run the following:")
+    else:
+        print("You may want to run the following "
+              "(after changing directory names):")
+
     print("  mkdir -p MRI/NII")
-    print("  find MRI/xnat -name '*.nii.gz' -exec cp {} NII \;")
+    print("  find MRI/xnat -name '*.nii.gz' -exec cp {} MRI/NII \;")
+    print("")
+    print("If the nifti files have not yet been created, "
+          "you will need to run pmri_process_xnat_dicoms "
+          "from the MRI directory.")
     print("")
     print("Then you may want to create a copy-to-proc.sh script.")

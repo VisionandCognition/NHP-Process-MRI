@@ -28,6 +28,8 @@ def preprocess_all(session_path):
     # you can also run "get_motion_outliers"
     nhp.get_motion_outliers(session_path)
 
+    print('\nYou probably now want to calculate the time events.')
+
 
 if __name__ == '__main__':
     session_path = None

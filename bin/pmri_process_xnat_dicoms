@@ -46,4 +46,5 @@ if __name__ == '__main__':
         print('Syntax:')
         print('\t%s XNAT_DIR [NII_OUTPUT]' % os.path.basename(sys.argv[0]))
         print('\nNII_OUTPUT defaults to NII')
-        print('XNAT_DIR is option if current directory contains an "xnat" directory.')
+        print('XNAT_DIR is optional if current directory contains '
+              'an "xnat" directory.')
