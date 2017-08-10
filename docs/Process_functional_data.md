@@ -55,6 +55,8 @@ High pass filter to match design.
   * Effective EPI echo spacing = 0.5585 
     * This is based on Diederik’s formula: EEES =  ((1000 * wfs)/(434.215 * (EPI factor+1))/acceleration)
     * with wfs (water fat shift) = 17.462; EPI factor = 35; acceleration (SENSE) = 2 (check sequence!)
+      * JW: the EPI/gradient train length is 35 = EPI factor+1
+      * EEES =  ((1000 * wfs)/(434.215 * (35))/acceleration) = 0.5745
   * EPI TE = 20 ms
   * Unwarp direction = y or  -y (try both)
     * Should be y if you scaled from -\pi to \pi (Diederick's example script)  ?????? (need to double check)
