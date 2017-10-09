@@ -9,9 +9,9 @@ The standard location for T1 data is `/NHP_MRI/Data_proc/SUBJ/DATE/anat/T1`. Exa
 If you are combining different types of T1's, use something like the following:
 
     #!/bin/bash
-    
+
     set -e # exit if a command fails
-    
+
     # --- First process the T1's individually
     FILES="T1_07.nii.gz
     T1_10.nii.gz
@@ -47,6 +47,10 @@ Extract the brain using fsl’s BET routine (you may need to tweak the optional 
 
 JW note: I find that `-f 0.55` works better for our data.
 
+ME note:
+* running ``bet`` with ``-R`` (robust option) gives generally favorable results
+* tuning the ``-f`` parameter around the range ``f=0.11-0.9`` gives results that include the frontal pole (but also include some non-brain tissue anterior to the pons; in my experience that had no negative effect for the registration).
+
 You can also use the gui:
 
     Bet &
@@ -54,7 +58,7 @@ You can also use the gui:
 ### Performing Brain extraction with Freesurfer
 
 Brain extraction sometimes works better with Freesurfer
-    
+
 (JW) from 20170524/anat/T1/process_t1-step2_freesurfer.sh
 
     # -- Convert for freesurfer
@@ -86,4 +90,3 @@ Brain extraction sometimes works better with Freesurfer
 
     # Edit with freeview
     freeview T1_avg_nu.nii.gz brainmask.manual.nii.gz:colormap=Heat:opacity=0.4
-
