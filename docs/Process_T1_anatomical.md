@@ -30,6 +30,8 @@ If you are combining different types of T1's, use something like the following:
     done
 
     wait # wait for individual file preprocessing
+    
+Note that `N4BiasFieldCorrection` could be used instead of mri_nu_correct.mni, if mri_nu_correct.mni is difficult to get working on your system.
 
 ### Using the BET command
 
