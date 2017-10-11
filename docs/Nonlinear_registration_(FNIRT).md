@@ -43,7 +43,11 @@ with the brainmasks, although just not using the mask seems to work fairly well.
     --biaslambda=10000
     #       If =1, ref image is used to calculate derivatives. Default =0
     --refderiv=0
-    
+ 
+ The first step is to perform FLIRT:
  ![Example FLIRT alignment to T1](images/ses-20170511_run-02_flirt_alignment_to_T1.png "Example FLIRT alignment to T1")
  
+ Then perform FNIRT (after making sure FLIRT result looks good):
  ![Example FNIRT alignment to T1](images/ses-20170511_run-02_fnirt_alignment_to_T1.png "Example FNIRT alignment to T1")
+ 
+ This example doesn't have B0 unwarping applied to the EPI.
