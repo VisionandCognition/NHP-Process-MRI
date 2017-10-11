@@ -51,3 +51,18 @@ with the brainmasks, although just not using the mask seems to work fairly well.
  ![Example FNIRT alignment to T1](images/ses-20170511_run-02_fnirt_alignment_to_T1.png "Example FNIRT alignment to T1")
  
  This example doesn't have B0 unwarping applied to the EPI.
+ 
+ This is what my FNIRT call looked like:
+ 
+     fnirt --ref=../../ses-20170511/anat/sub-eddy_ses-20170511_T1w_res-1x1x1_reference.nii.gz \
+      --in=sub-eddy_ses-20170607_task-RestingPRF_run-02_bold_res-1x1x1_nucorrect_mean_reference.nii.gz \
+      --aff=reg-09dof_nosearch.mat \
+      --config=nmt.conf \
+      --iout=fnirt_output.nii.gz && fslview ../../ses-20170511/anat/sub-eddy_ses-20170511_T1w_res-1x1x1_reference.nii.gz fnirt_output.nii.gz
+ 
+ FNIRT outputs a coefficient image that can be used to transform other images, such as the masks. For example:
+ 
+     applywarp --ref=../../ses-20170511/anat/sub-eddy_ses-20170511_T1w_res-1x1x1_reference.nii.gz \
+      --in=sub-eddy_ses-20170607_task-RestingPRF_run-02_bold_res-1x1x1_manualmask.nii.gz \
+      --warp=sub-eddy_ses-20170607_task-RestingPRF_run-02_bold_res-1x1x1_nucorrect_mean_reference_warpcoef.nii.gz  \
+      --out=sub-eddy_ses-20170607_task-RestingPRF_run-02_bold_res-1x1x1_fnirt_mask.nii.gz
