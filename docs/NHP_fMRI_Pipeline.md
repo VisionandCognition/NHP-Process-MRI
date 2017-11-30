@@ -21,13 +21,28 @@ Some of the python scripts that should not be included are in the
 Download data from XNAT
 -----------------------
 
+Go to the subject's directory, ex. /NHP_MRI/Data_raw/EDDY, and type:
+
+    SCAN_DATE=20171231  # <- Scan session date
+    SUBJ=EDDY  # SUBJECT
+    pmri_setup_raw_dir ${SCAN_DATE}
+    cd $SCAN_DATE
+    download_xnat NHP_${SCAN_DATE}_${SUBJ}
+    
+If successful, it will state "Succesfully contacted XNAT. Downloading now...". If not successful, it will hang for a long time. The first time you run download_xnat, it will create an credientials file. You will need to delete or modify this credientials file if you change your password.
+
 I've (JW) been downloading the XNAT data to (for example) `/NHP_MRI/Data_raw/EDDY/20170420/MRI/xnat`.
 
 
 Convert dicom to nifti
 ----------------------
 
-If you download the data from the XNAT server, you can run:
+If the XNAT server already performed the nifti conversion, you may want to move these to a separate directory:
+
+    mkdir MRI/NII
+    find MRI -name "*.nii.gz" -exec mv {} MRI/NII \;
+
+If you download the data from the XNAT server, but the Nifti conversion has not been run (or has run with errors), you can run:
 
     process_xnat_dicoms.py xnat [NII]
 
@@ -36,11 +51,26 @@ where `xnat` is the XNAT downloaded directory and `NII` is the nifti output dire
 Use dcm2nii or dcm2niix in the terminal, e.g.:
 
     dcm2nii -o outputfolder dicomfolder/*
+    
+Copying behavioral data
+-----------------------
+
+To move Behavior data from USB, try something like:
+
+    find /media/jonathan/0A1E-0594/Data/ -name "Eddy_*StimSettings*${SCAN_DATE}*.[0-9][0-9]" -exec mv {} Behavior \;
+
+And for the eye data:
+
+     find /media/jonathan/0A1E-0594/Data/ -name "Eddy_${SCAN_DATE}*.tda" -exec mv {} Eye \;
 
 Copying the data from Data_raw to Data_proc
 -------------------------------------------
 
 I have an example script of this at `/NHP_MRI/Data_raw/EDDY/20170420/copy-to-proc.sh`.
+
+For the curve tracing, I've started copying Data_raw to BIDS_raw. You can find examples with the following from `Data_raw` or the subject's directory:
+
+    find -maxdepth 3 -name "copy-to-bids.sh" -exec ls -lt {} +
 
 
 [Processing the T1 anatomical](Process_T1_anatomical.md)
