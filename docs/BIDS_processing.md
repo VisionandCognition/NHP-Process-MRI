@@ -3,6 +3,7 @@ For processing data using the BIDS format, see:
 https://github.com/VisionandCognition/NHP-BIDS/
 
 1. Create a `copy-to-bids.sh` script in the `Data_raw/SUBJ/YYYYMMDD` folder, and run it.
+1. Modify `code/bids_templates.py` to add the new session (and subject, if needed).
 2. Run `./code/bids_minimal_preprocessing.py` from your BIDS root directory (this file also has instructions in the file header).
 3. Run `./code/resample_isotropic_workflow.py`
 4. Create or modify csv file that lists the runs to process.
