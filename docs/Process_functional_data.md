@@ -1,3 +1,6 @@
+This document has been replaced by the [BIDS processing pipeline](BIDS_processing.md).
+
+
 Preprocessing functionals
 -------------------------
 
