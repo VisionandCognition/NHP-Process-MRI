@@ -63,7 +63,7 @@ And for the eye data:
 
      find /media/jonathan/0A1E-0594/Data/ -name "Eddy_${SCAN_DATE}*.tda" -exec mv {} Eye \;
 
-Copying the data from Data_raw to Data_proc
+Copying the data from Data_raw to Data_proc (or BIDS directory)
 -------------------------------------------
 
 I have an example script of this at `/NHP_MRI/Data_raw/EDDY/20170420/copy-to-proc.sh`.
@@ -72,6 +72,7 @@ For the curve tracing, I've started copying Data_raw to BIDS_raw. You can find e
 
     find -maxdepth 3 -name "copy-to-bids.sh" -exec ls -lt {} +
 
+For more on processing BIDS pipeline, see: [BIDS_Processing](BIDS_processing.md).
 
 [Processing the T1 anatomical](Process_T1_anatomical.md)
 ----------------------------
@@ -89,5 +90,7 @@ For more details, visit [Processing the B0 fieldmap for undistortion](Processing
 
 [Processing functional data](Process_functional_data.md)
 ----------------------------
+
+Note: A lot of the this information has been replaced by the [BIDS_processing pipeline](BIDS_processing.md).
 
 Information on processing the functional data has been moved to [Process functional data](Process_functional_data.md).
