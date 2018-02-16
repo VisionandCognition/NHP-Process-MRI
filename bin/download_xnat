@@ -39,7 +39,7 @@ if __name__ == '__main__':
     proj = xnat.select.project(args.proj)
     assert proj.exists()
     subj = proj.subject(args.subj)
-    assert subj.exists()
+    assert subj.exists(), "Subject %s does not exist for project %s!" % (args.subj, args.proj)
 
     print("Succesfully contacted XNAT. Downloading now...")
 

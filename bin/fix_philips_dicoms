@@ -1,0 +1,68 @@
+#!/usr/bin/env python
+
+import os
+import re
+import pathlib
+import subprocess
+
+def main(path):
+    files = [f for f in os.listdir(path)
+             if os.path.isfile(os.path.join(path,f))]
+
+    fmats = [re.match(r'[^-]*-\d+-(\d+)-[^-]*.dcm', f) for f in files]
+    fdict = {int(m.group(1)):m.group(0) for m in fmats if m is not None}
+
+    prev_num = 0
+    groups_start = []
+    groups_end = []
+    for num in sorted(fdict.keys()):
+        if len(groups_start) == 0:
+            groups_start.append(num)
+            assert num == 1, (
+                "Code assumes the first file number is 1, not %d." % num)
+
+        gap = num - prev_num
+        if gap > 1:
+            groups_end.append(prev_num)
+            groups_start.append(num)
+
+        prev_num = num
+
+    groups_end.append(prev_num)
+
+    groups = zip(groups_start, groups_end)
+    groups2 = [(g[0], g[1], g[1] - g[0] + 1) for g in groups]
+    groups = None
+
+    # number of complete volumes
+    nvols = groups2[-1][2]
+    for i, g in enumerate(groups2):
+        if g[2] < nvols:
+            print("The %dth group (zero-based) only had %d volumes!" %
+                  (i, g[2]))
+            nvols = g[2]
+
+    print("The number of complete volumes is %d." % nvols)
+
+    discard_path = 'discarded_slices'
+    pathlib.Path(discard_path).mkdir(exist_ok=True)
+    for g in groups2:
+        if g[2] <= nvols:
+            assert g[2] == nvols
+            print("% 4d - % 4d: %d" % g)
+        else:
+            print("% 4d - % 4d: %d --- moving last %d volumes" %
+                  tuple(list(g) + [g[2] - nvols]))
+
+            for i in range(g[0] + nvols, g[1]+1):
+                print("\t\tmoving %d" % i)
+                os.rename(
+                    os.path.join(path, fdict[i]),
+                    os.path.join(discard_path, fdict[i]))
+
+    pathlib.Path('NII').mkdir(exist_ok=True)
+    subprocess.call(['dcm2niix', '-o', 'NII', path])
+
+
+if __name__ == '__main__':
+    main('DICOM')
