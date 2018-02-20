@@ -20,3 +20,5 @@ contains:
 
 * CT-Shaped Checkerboard LH.csv
 * CT-Shaped Checkerboard RH.csv
+
+The script [bids_convert_csv_eventlog](https://github.com/VisionandCognition/NHP-BIDS/blob/master/code/bids_convert_csv_eventlog) is called by the bids_minimal_processing.py script. This script should be the first script called after copying the data from Data_raw to NHP-BIDS. See [BIDS processing docs](BIDS_processing.md).
