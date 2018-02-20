@@ -8,9 +8,11 @@ For data collected with the Curve tracing code (which includes the localizer tas
 | -------- |:------------------------:| -----------:|----:|---------------:|
 | 143.5002 |CT-Shaped Checkerboard RH | NewStimulus	|6	  | 143.5477       |
 
-This means that the stimulus corresponds to row 6 of the stimulus file. The task gives a hint for the stimulus file. For example, CT-Shaped Checkerboard RH correspond to:
+This means that the stimulus corresponds to row 6 of the stimulus file. The task gives a hint for the stimulus file. For example, ``CT-Shaped Checkerboard RH`` corresponds to stimulus file:
 
 https://github.com/VisionandCognition/VCscripts-MRI/blob/master/TRACKER_PTB/Curve_Tracing/Experiment/StimSettings/CheckerboardCurveStimulus_RightHemisphere.csv
+
+Here, row 6 indicates that the event was "GapDR".
 
 I have modified the script [bids_convert_csv_eventlog](https://github.com/VisionandCognition/NHP-BIDS/blob/master/code/bids_convert_csv_eventlog) to lookup the correct `CombinedStim` values for CTCheckerboard *if* the correct stimulus files are put in the `sourcedata` func event folder and has the name specified by the task column with ".csv" added. For example, the directory:
 
