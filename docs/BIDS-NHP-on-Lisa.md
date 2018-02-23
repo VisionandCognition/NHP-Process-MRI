@@ -1,3 +1,5 @@
+The main documentation for the BIDS pipeline is at [BIDS processing](BIDS_processing.md).
+
 We have (at the time of writing this) a project directory at:
 
     /nfs/cortalg/
