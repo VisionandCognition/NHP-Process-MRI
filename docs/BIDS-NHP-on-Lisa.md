@@ -35,7 +35,7 @@ This is a bit involves. I first create a mount point for the project dir on my l
 This will only work from SURFSARA white-listed IP addresses.
 My fstab entry looks like:
 
-   jonathan@lisa.surfsara.nl:/nfs/cortalg /mnt/lisa-cortalg fuse.sshfs noauto,x-systemd.automount,_netdev,users,idmap=user,transform_symlinks,identityfile=/home/jonathan/.ssh/id_rsa,allow_other,uid=1000,gid=1000,allow_other,reconnect 0 0
+    jonathan@lisa.surfsara.nl:/nfs/cortalg /mnt/lisa-cortalg fuse.sshfs noauto,x-systemd.automount,_netdev,users,idmap=user,transform_symlinks,identityfile=/home/jonathan/.ssh/id_rsa,allow_other,uid=1000,gid=1000,allow_other,reconnect 0 0
 
 Then I set it to sync with my local BIDS-NHP directory (`/big/NHP_MRI/NHP-BIDS/`).
 
