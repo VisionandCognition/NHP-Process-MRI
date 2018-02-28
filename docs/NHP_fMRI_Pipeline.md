@@ -25,6 +25,7 @@ Go to the subject's directory, ex. /NHP_MRI/Data_raw/EDDY, and type:
 
     SCAN_DATE=20171231  # <- Scan session date
     SUBJ=EDDY  # SUBJECT
+    # workon mri-py2  # <-- requires Python 2 and pyxnat
     pmri_setup_raw_dir ${SCAN_DATE}
     cd $SCAN_DATE
     download_xnat NHP_${SCAN_DATE}_${SUBJ}
@@ -36,6 +37,8 @@ I've (JW) been downloading the XNAT data to (for example) `/NHP_MRI/Data_raw/EDD
 
 Convert dicom to nifti
 ----------------------
+
+Note that the SCNAT's conversion to Nifti doesn't generate BIDS json files. You may want to run `process_xnat_dicoms.py` or `dcm2niix` to generate these files (may be necessary for publishing data?).
 
 If the XNAT server already performed the nifti conversion, you may want to move these to a separate directory:
 
