@@ -71,9 +71,9 @@ for f=1:length(F)
                             json.session.logfile    = fn;
                             json.session.logfolder  = [Par.MONKEY '_' DateString];
                             if length(ff)>1 && strcmp(fn(end-7:end-5),'Run')
-                                json_name = ['Log_' DateString '_Run' num2str(ff1) '.json'];
+                                json_name = ['Log_' DateString '_Run' num2str(ff1) '_session.json'];
                             else
-                                json_name = ['Log_' DateString '.json'];
+                                json_name = ['Log_' DateString '_session.json'];
                             end
                             savejson('', json, json_name);
                             fprintf(fid,['Saving ' json_name '\n']);
