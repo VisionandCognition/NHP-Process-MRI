@@ -3,17 +3,17 @@ startfolder = pwd;
 
 addpath(genpath('/home/chris/Documents/TRACKER/VCscripts-MRI/SharedScripts/jsonlab'));
 
-%LogRoot = '/media/NETDISKS/VCNIN/NHP_MRI/Data_raw/DANNY';
-LogRoot = '/media/NETDISKS/VCNIN/NHP_MRI/Data_raw/EDDY';
+LogRoot = '/media/NETDISKS/VCNIN/NHP_MRI/Data_raw/DANNY';
+%LogRoot = '/media/NETDISKS/VCNIN/NHP_MRI/Data_raw/EDDY';
 
-Sessions_to_include = {'all'}
+Sessions_to_include = {'all'};
 
 cd(LogRoot);
 F=dir;
 for f=1:length(F)
     if ~strcmp(F(f).name(1),'.') && ...
-        ~strcmp(F(f).name,'json_posthoc_log.txt') && ...
-        (any(strcmp(F(f).name,Sessions_to_include)) || strcmp(Sessions_to_include{1},'all)')
+            ~strcmp(F(f).name,'json_posthoc_log.txt') && ...
+            (any(strcmp(F(f).name,Sessions_to_include)) || strcmp(Sessions_to_include{1},'all'))
         cd(LogRoot);
         cd(F(f).name);
         F2 = dir;
@@ -29,8 +29,11 @@ for f=1:length(F)
                         ff = dir('Log_*.json');
                         warning off
                         for ff1=1:length(ff)
-                            newname=[ff(ff1).name(1:end-5) '_session.json'];
-                            system(['mv ' ff(ff1).name newname]);
+                            if ~strcmp(ff(ff1).name(end-11:end),'session.json')
+                                newname=[ff(ff1).name(1:end-5) '_session.json'];
+                                fprintf(['Changing name from ' ff(ff1).name ' to ' newname '\n']);
+                                system(['mv ' ff(ff1).name ' ' newname]);
+                            end
                         end
                         if isdir(F3(f3).name)
                             cd ..
@@ -42,6 +45,5 @@ for f=1:length(F)
         end
     end
 end
-fclose(fid);
 cd(startfolder);
 clear all; close all hidden;
