@@ -2,7 +2,9 @@ For processing data using the BIDS format, clone the following repository:
 
 https://github.com/VisionandCognition/NHP-BIDS/
 
-The scripts require `python3` (`mkvirtualenv --python=/usr/bin/python3 mri-py3`) and a recent version of nipype (`pip install https://github.com/nipy/nipype/archive/master.zip`).
+The scripts require `python3` (`mkvirtualenv --python=/usr/bin/python3 mri-py3`) and a recent version of nipype (`pip install https://github.com/nipy/nipype/archive/master.zip`). You should also add the `code` directory to both the `PYTHONPATH` and `PATH` environment variables.
+
+You should change the `curve-tracing-20180125-run02.csv` to a CSV script that actually exists. There should be some available in the NHP-BIDS directory (perhaps they will be moved to some place cleaner, such as code?).
 
 1. Create a `copy-to-bids.sh` script in the `Data_raw/SUBJ/YYYYMMDD` folder, and run it.
    * Base script off of existing script, for example, `Data_raw/EDDY/20180222/copy-to-bids.sh`. This script tends to improve each iteration. To find the most recent one, you can try calling `find -maxdepth 3 -name "copy-to-bids.sh" -exec ls -lt {} +` from the `Data_raw` directory. Your colleague, however, may be keeping a secret version to themselves.
