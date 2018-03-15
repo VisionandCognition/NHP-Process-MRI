@@ -48,6 +48,9 @@ for f=1:length(F)
                                     json.dataset.protocol   = '17.29.02';
                                     json.session.investigator = 'JonathanWilliford';
                                     json.session.stimulus   = Par.STIMSETFILE(find(Par.STIMSETFILE=='_',1,'last')+1:end);
+                                    if isempty(json.session.stimulus)
+                                        json.session.stimulus='undefined';
+                                    end
                                     json.dataset.name      = 'CurveTracing';
                                     DateString = fn(end-16:end-4);
                                 else % CK retinotopy
