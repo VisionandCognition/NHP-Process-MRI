@@ -1,14 +1,26 @@
 The main documentation for the BIDS pipeline is at [BIDS processing](BIDS_processing.md).
+More information on the LISA system can be found here: https://userinfo.surfsara.nl/systems/lisa
 
-We have (at the time of writing this) a project directory at:
+We have (at the time of writing) a project directory at:
 
     /nfs/cortalg/
     
-I think it is currently set to expire on July 1st. However, you could ask Surfsara for extension. 
-Caspar v.L. and Boy M. helped get the project space to begin with.
+I think it is currently set to expire on July 1st 2018. However, you could ask Surfsara for extension. 
+Caspar v.L. and Boy M. helped get the project space to begin with. General contact: helpdesk@surfsara.nl
 
-Setting up the BIDS directory
-=============================
+
+Setting up your LISA account
+============================
+1. Apply for a LISA account at Surfsara. This requires an email to helpdesk@surfsara.nl. Ask a colleague with access for a template email so you know what information they will need to set you up (NB: link to University of Amsterdam is required) .
+2. Have one of your collaborators request that you'll be given access to the project space.
+
+
+Setting up the BIDS directory on LISA
+=====================================
+
+Log in to the cluster using ssh:
+
+    ssh <username>@lisa.surfsara.nl
 
 Clone the repo:
 
@@ -25,13 +37,34 @@ If desired, you can create links to the shared project directory:
 Derivatives contains manual-mask, which is actually in the repository.
 Hence, it is ugly making this symbolic link. Maybe manual-mask should be moved out of derivatives.
 
-Syncing Project dir
-==================
+
+Moving data across your local machine and LISA
+==============================================
+
+You can mount LISA as an ssh-mapped drive using sshfs (see https://github.com/libfuse/sshfs) and easily move data or sync folders. Alternatively, you can use an ftp-client to access the drive with the ssh protocol.
+
+
+Setting up python and nipype on LISA
+==============================================
+
+Download the anaconda installer script and move it your LISA drive.
+    
+    https://conda.io/docs/user-guide/install/download.html
+
+Install anaconda 3 by running the installer script (you may need to change permissions)
+
+Install nipype:
+
+    pip install git+https://github.com/VisionandCognition/nipype.git
+
+
+[OPTIONAL] Syncing Project dir
+==============================
 
 Using FreeFileSync
 ------------------
 
-This is a bit involves. I first create a mount point for the project dir on my local system (`/mnt/lisa-cortalg/`).
+This is a bit involved. I first create a mount point for the project dir on my local system (`/mnt/lisa-cortalg/`).
 This will only work from SURFSARA white-listed IP addresses.
 My fstab entry looks like:
 
