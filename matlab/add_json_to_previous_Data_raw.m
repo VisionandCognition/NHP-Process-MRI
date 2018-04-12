@@ -6,7 +6,7 @@ addpath(genpath('/home/chris/Documents/TRACKER/VCscripts-MRI/SharedScripts/jsonl
 %LogRoot = '/media/NETDISKS/VCNIN/NHP_MRI/Data_raw/DANNY';
 LogRoot = '/media/NETDISKS/VCNIN/NHP_MRI/Data_raw/EDDY';
 
-Sessions_to_include = {'all'};
+Sessions_to_include = {'20180301'};
 
 cd(LogRoot);
 fid=fopen('json_posthoc_log.txt','w');

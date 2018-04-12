@@ -61,7 +61,7 @@ def main(path):
                     os.path.join(discard_path, fdict[i]))
 
     pathlib.Path('NII').mkdir(exist_ok=True)
-    subprocess.call(['dcm2niix', '-o', 'NII', path])
+    subprocess.call(['dcm2niix', '-b', 'y', '-z', 'y', '-o', 'NII', path])
 
 
 if __name__ == '__main__':
