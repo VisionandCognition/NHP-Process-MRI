@@ -3,7 +3,7 @@ Processing the T1 anatomical
 
 The standard location for T1 data is `/NHP_MRI/Data_proc/SUBJECT/YYYYMMDD/anat/T1`. Example scripts are at: `/NHP_MRI/Data_proc/EDDY/20170614/anat/T1/process_t1-step*.sh`. Alternatively, after running the initial `minimal_processing` and `isotropic_resampling` steps with nipype in `NHP-BIDS` you can find them in `/NHP-MRI/NHP-BIDS/derivatives/resampled-isotropic-06mm/sub-<subject>/ses-<yyyymmdd>/anat`.
 
-### Pre-processing th indivisual T1's
+### Pre-processing the indivisual T1's
 
 If you take the data from `Data_proc` they still need to be preprocessed. If you are combining different types of T1's, use something like the following:
 
@@ -38,12 +38,13 @@ Note that `N4BiasFieldCorrection` could be used instead of mri_nu_correct.mni, i
 
 T1's that are already pre-processed in nipype, don't need to be re-oriented, but you might still want to perform the bias field correction.
 
+
 ### Brain extraction / skull-stripping
 
 Brain extraction can be done several ways:
 
-Using the BET command
----------------------
+## Using the BET command
+
 Get the approximate middle coordinate (somewhere in the pons) and write them down (<x y z>)
 
     fslview T1_image &
@@ -64,8 +65,9 @@ You can also use the gui:
 
     Bet &
 
-Performing Brain extraction with Freesurfer
--------------------------------------------
+
+## Performing Brain extraction with Freesurfer
+
 Brain extraction sometimes works better with Freesurfer
 
 (JW) from 20170524/anat/T1/process_t1-step2_freesurfer.sh
@@ -100,8 +102,9 @@ Brain extraction sometimes works better with Freesurfer
     # Edit with freeview
     freeview T1_avg_nu.nii.gz brainmask.manual.nii.gz:colormap=Heat:opacity=0.4
 
-Using the NMT template as a prior
----------------------------------
+
+## Using the NMT template as a prior
+
 An alternative way to perform skullstripping, registration to template & atlas, and segmentation is by using the NIMH Macaque Template in `/NHP-MRI/Template/NMT/NMTv1.2`. 
 
 Create a folder for your subject in `<>/NMTv1.2/single_subject_scans` and copy the`align_and_process.sh` script to it together with your (averaged) T1 image. Adjust the script to your needs (documentation in the script). and run it. 
