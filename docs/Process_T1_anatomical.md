@@ -43,7 +43,7 @@ T1's that are already pre-processed in nipype, don't need to be re-oriented, but
 
 Brain extraction can be done several ways:
 
-## Using the BET command
+#### Using the BET command
 
 Get the approximate middle coordinate (somewhere in the pons) and write them down (<x y z>)
 
@@ -66,7 +66,7 @@ You can also use the gui:
     Bet &
 
 
-## Performing Brain extraction with Freesurfer
+#### Performing Brain extraction with Freesurfer
 
 Brain extraction sometimes works better with Freesurfer
 
@@ -103,7 +103,7 @@ Brain extraction sometimes works better with Freesurfer
     freeview T1_avg_nu.nii.gz brainmask.manual.nii.gz:colormap=Heat:opacity=0.4
 
 
-## Using the NMT template as a prior
+#### Using the NMT template as a prior
 
 An alternative way to perform skullstripping, registration to template & atlas, and segmentation is by using the NIMH Macaque Template in `/NHP-MRI/Template/NMT/NMTv1.2`. 
 
