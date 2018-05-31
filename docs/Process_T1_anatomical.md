@@ -107,7 +107,7 @@ Brain extraction sometimes works better with Freesurfer
 
 An alternative way to perform skullstripping, registration to template & atlas, and segmentation is by using the NIMH Macaque Template in `/NHP-MRI/Template/NMT/NMTv1.2`. 
 
-Create a folder for your subject in `<>/NMTv1.2/single_subject_scans` and copy the`align_and_process.sh` script to it together with your (averaged) T1 image. Adjust the script to your needs (documentation in the script). and run it. 
+Create a folder for your subject in `<>/NMTv1.2/single_subject_scans` and copy the`align_and_process.sh` script to it together with your (averaged) T1 image. Adjust the script to your needs (documentation in the script) and run it. 
 
 This will:
 - warp your T1 to the NMT template 
@@ -118,4 +118,4 @@ This will:
 
 If for some reason the brainmask is off, you can now warp the template mask to single-subject space and apply it to create the skullstripped brain volume:
 
-`fslmaths <Subject_BrainWithSkull.nii.gz> -mas <WarpedBrainMask.nii.gz> <Subject_Brain.nii.gz>
+`fslmaths <Subject_BrainWithSkull.nii.gz> -mas <WarpedBrainMask.nii.gz> <Subject_Brain.nii.gz>`
