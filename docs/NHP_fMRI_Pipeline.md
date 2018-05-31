@@ -30,10 +30,11 @@ Go to the subject's directory, ex. /NHP_MRI/Data_raw/EDDY, and type:
     cd $SCAN_DATE
     download_xnat NHP_${SCAN_DATE}_${SUBJ}
     
-If successful, it will state "Succesfully contacted XNAT. Downloading now...". If not successful, it will hang for a long time. The first time you run download_xnat, it will create an credientials file. You will need to delete or modify this credientials file if you change your password.
+If successful, it will state "Succesfully contacted XNAT. Downloading now...". If not successful, it will hang for a long time. The first time you run download_xnat, it will create an credientials file. You will need to delete or modify this credentials file if you change your password.
 
-I've (JW) been downloading the XNAT data to (for example) `/NHP_MRI/Data_raw/EDDY/20170420/MRI/xnat`.
+The XNAT server is a service of the Spinoza Center that tends to be under development. At this moment (2018-05-31) it is operational and the fastest way to get the data from it is probably by downloading a large zip-file from the web-interface. SC management is considering implementing another solution so all this may change in the future.
 
+At any rate, you should be able to get the data from the SC as soon as possible and *check whether it is complete and non-corrupt*. Then,save the dicoms in `VCNIN/Data_dcm/SUBJECT/YYYYMMDD`.
 
 Convert dicom to nifti
 ----------------------
@@ -49,42 +50,44 @@ If you download the data from the XNAT server, but the Nifti conversion has not 
 
     process_xnat_dicoms.py xnat [NII]
 
-where `xnat` is the XNAT downloaded directory and `NII` is the nifti output directory. If your current directory has the directory `xnat` all of the parameters are optional. This function uses `dcm2niix`. It uses the gzip command for compression, since the `dcm2nii` had difficulty handling compression of large files (I haven't tested dcm2niix).
+where `xnat` is the XNAT downloaded directory and `NII` is the nifti output directory. If your current directory has the directory `xnat` all of the parameters are optional. This function uses `dcm2niix`. It uses the gzip command for compression, since the `dcm2nii` had difficulty handling compression of large files. The boxcar flag (`-b`) can be used to also create json files with information from the dicom headers. This can be very useful when you need to match up behavioral logs with functional data (use the 'acquisition time' mentioned in the json and compare with the timestamp in the log-filenames). To enable the json output use `-b y`, if you want to get only the json files you can use `-b o` (but since this takes some time, it is a lot faster to already include the operation on the first conversion).
 
 Use dcm2nii or dcm2niix in the terminal, e.g.:
 
-    dcm2nii -o outputfolder dicomfolder/*
+    dcm2niix -b y -o outputfolder dicomfolder/*
+    
+Raw copies of the nifti files need to be saved in `VCNIN/Data_raw/SUBJECT/YYYYMMDD/MRI/`. We will also keep raw versions of the behavioral logs and eye-data here. Any processing will be done in `VCNIN/NHP-BIDS/` (preferred) or `VCNIN/Data_proc`.
     
 Copying behavioral data
 -----------------------
 
 To move Behavior data from USB, try something like:
 
-    find /media/jonathan/0A1E-0594/Data/ -name "Eddy_*StimSettings*${SCAN_DATE}*.[0-9][0-9]" -exec mv {} Behavior \;
+    find /media/usb-drive/Data/ -name "Eddy_*StimSettings*${SCAN_DATE}*.[0-9][0-9]" -exec mv {} Behavior \;
 
 And for the eye data:
 
-     find /media/jonathan/0A1E-0594/Data/ -name "Eddy_${SCAN_DATE}*.tda" -exec mv {} Eye \;
+     find /media/usb-drive/Data/ -name "Eddy_${SCAN_DATE}*.tda" -exec mv {} Eye \;
 
-Copying the data from Data_raw to Data_proc (or BIDS directory)
--------------------------------------------
+Copying the data from Data_raw to BIDS directory or Data_proc
+-------------------------------------------------------------
 
-I have an example script of this at `/NHP_MRI/Data_raw/EDDY/20170420/copy-to-proc.sh`.
+There are example scripts for this at `/NHP_MRI/Scripts/copy-to-bids.sh` and `/NHP_MRI/Scripts/copy-to-proc.sh`.
 
-For the curve tracing, I've started copying Data_raw to BIDS_raw. You can find examples with the following from `Data_raw` or the subject's directory:
+You can find more recent examples with the following from `Data_raw` or the subject's directory:
 
     find -maxdepth 3 -name "copy-to-bids.sh" -exec ls -lt {} +
 
 For more on processing BIDS pipeline, see: [BIDS_Processing](BIDS_processing.md).
 
 [Processing the T1 anatomical](Process_T1_anatomical.md)
-----------------------------
+------------------------------
 
 Moved to [Processing T1 anatomical](Process_T1_anatomical.md).
 
 
 [Processing the B0 fieldmap for undistortion](Processing_B0_fieldmap_for_undistortion.md)
--------------------------------------------
+---------------------------------------------
 
 Run `process-fieldmaps.sh` or `process-fieldmaps.sh x y z`, where x,y,z are the center of the brain.
 Calling without arguments will initiate the processing and then open the magnitude image with fslview (so you can find center).
