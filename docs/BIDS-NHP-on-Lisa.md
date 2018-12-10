@@ -30,13 +30,16 @@ If desired, you can create links to the shared project directory:
 
     cd ~/NHP-BIDS
     ls /nfs/cortalg/NHP-BIDS/
+    ln -s /nfs/cortalg/NHP-BIDS/manual-masks .
     ln -s /nfs/cortalg/NHP-BIDS/scratch .
     ln -s /nfs/cortalg/NHP-BIDS/sourcedata .
+    ln -s /nfs/cortalg/NHP-BIDS/sub-eddy .
+    ln -s /nfs/cortalg/NHP-BIDS/sub-danny .
+    ln -s /nfs/cortalg/NHP-BIDS/sub-<MONKEY> . # add more monkeys when necessary
     ln -s /nfs/cortalg/NHP-BIDS/derivatives .
+    ln -s /nfs/cortalg/NHP-BIDS/workingdirs .
     
-Derivatives contains manual-mask, which is actually in the repository.
-Hence, it is ugly making this symbolic link. Maybe manual-mask should be moved out of derivatives.
-
+Derivatives also contains a folder manual-mask, which is there for historic reasons but should eventually be removed.
 
 Moving data across your local machine and LISA
 ==============================================
