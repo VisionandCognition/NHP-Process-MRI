@@ -18,9 +18,12 @@ Some of the python scripts that should not be included are in the
 `Process-NHP-MRI/bin` directory. You should add this to your $PATH.
 
 
-Download data from XNAT
------------------------
+Download data from the Scanner
+------------------------------
 
+There are different ways of doing this. Files form our scanning sessions are generally automatically pushed to the Spinoza Centre's XNAT server. Below, you can find an explanation of how to get it off this server and on your local machine, but note that this process is not always super reliable. ALternatively, we tend to copy our data to the `FTP/projects` folder on the MRI console manually and than download it from the SC-FTP server with an FTP-client like Filezilla (linux) or Cyberduck (mac). However you do it, you should end up with a DICOM folder in `/NHP_MRI/Data_dcm/<SUBJ>/<YYYYMMDD>`
+
+== From the XNAT server ===
 Go to the subject's directory, ex. /NHP_MRI/Data_raw/EDDY, and type:
 
     SCAN_DATE=20171231  # <- Scan session date
@@ -34,12 +37,12 @@ If successful, it will state "Succesfully contacted XNAT. Downloading now...". I
 
 The XNAT server is a service of the Spinoza Center that tends to be under development. At this moment (2018-05-31) it is operational and the fastest way to get the data from it is probably by downloading a large zip-file from the web-interface. SC management is considering implementing another solution so all this may change in the future.
 
-At any rate, you should be able to get the data from the SC as soon as possible and *check whether it is complete and non-corrupt*. Then,save the dicoms in `VCNIN/Data_dcm/SUBJECT/YYYYMMDD`.
+At any rate, you should be able to get the data from the SC as soon as possible and *check whether it is complete and non-corrupt*. Then,save the dicoms in `VCNIN/Data_dcm/<SUBJECT>/<YYYYMMDD>`.
 
 Convert dicom to nifti
 ----------------------
 
-Note that the SCNAT's conversion to Nifti doesn't generate BIDS json files. You may want to run `process_xnat_dicoms.py` or `dcm2niix` to generate these files (may be necessary for publishing data?).
+Note that the SCXNAT's conversion to Nifti doesn't generate BIDS json files. It is therefore better to download the dicom files and do the conversion ourselves. To do this, you can run `process_xnat_dicoms.py` or `dcm2niix` to generate nifti files.
 
 If the XNAT server already performed the nifti conversion, you may want to move these to a separate directory:
 
@@ -52,10 +55,12 @@ If you download the data from the XNAT server, but the Nifti conversion has not 
 
 where `xnat` is the XNAT downloaded directory and `NII` is the nifti output directory. If your current directory has the directory `xnat` all of the parameters are optional. This function uses `dcm2niix`. It uses the gzip command for compression, since the `dcm2nii` had difficulty handling compression of large files. The boxcar flag (`-b`) can be used to also create json files with information from the dicom headers. This can be very useful when you need to match up behavioral logs with functional data (use the 'acquisition time' mentioned in the json and compare with the timestamp in the log-filenames). To enable the json output use `-b y`, if you want to get only the json files you can use `-b o` (but since this takes some time, it is a lot faster to already include the operation on the first conversion).
 
-Use dcm2nii or dcm2niix in the terminal, e.g.:
+Use dcm2niix in the terminal, e.g.:
 
     dcm2niix -b y -o outputfolder dicomfolder/*
-    
+
+THe latest versions of `dcm2niix` is a bit picky about data consistency and doesn't do well with some of our standard output dicoms. If you first remove all dicom files that start with `XX` you should not run into errors.
+
 Raw copies of the nifti files need to be saved in `VCNIN/Data_raw/SUBJECT/YYYYMMDD/MRI/`. We will also keep raw versions of the behavioral logs and eye-data here. Any processing will be done in `VCNIN/NHP-BIDS/` (preferred) or `VCNIN/Data_proc`.
     
 Copying behavioral data
