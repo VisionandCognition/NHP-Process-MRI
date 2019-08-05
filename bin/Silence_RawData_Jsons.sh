@@ -2,6 +2,7 @@
 
 SERVER=/media/NETDISKS/VS02/VandC
 #SERVER=/media/DATA1
+#SERVER=/media/chris/MRI_3
 
 RAWDATA=${SERVER}/NHP_MRI/Data_raw
 
