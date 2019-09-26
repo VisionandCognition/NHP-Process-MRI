@@ -21,9 +21,9 @@ Some of the python scripts that should not be included are in the
 Download data from the Scanner
 ------------------------------
 
-There are different ways of doing this. Files form our scanning sessions are generally automatically pushed to the Spinoza Centre's XNAT server. Below, you can find an explanation of how to get it off this server and on your local machine, but note that this process is not always super reliable. ALternatively, we tend to copy our data to the `FTP/projects` folder on the MRI console manually and than download it from the SC-FTP server with an FTP-client like Filezilla (linux) or Cyberduck (mac). However you do it, you should end up with a DICOM folder in `/NHP_MRI/Data_dcm/<SUBJ>/<YYYYMMDD>`
+There are different ways of doing this. Files form our scanning sessions are generally automatically pushed to the Spinoza Centre's XNAT server. Below, you can find an explanation of how to get it off this server and on your local machine, but note that this process is not always superreliable. Alternatively, we tend to copy our data to the `FTP/projects` folder on the MRI console manually and than download it from the SC-FTP server with an FTP-client like Filezilla (linux) or Cyberduck (mac). However you do it, you should end up with a DICOM folder in `/NHP_MRI/Data_dcm/<SUBJ>/<YYYYMMDD>`
 
-== From the XNAT server ===
+== From the XNAT server ===    
 Go to the subject's directory, ex. /NHP_MRI/Data_raw/EDDY, and type:
 
     SCAN_DATE=20171231  # <- Scan session date
