@@ -1,9 +1,9 @@
-The main documentation for the BIDS pipeline is at [BIDS processing](BIDS_processing.md).
+The main documentation for the BIDS pipeline is at [NHP-BIDS processing](NHP-BIDS_processing.md).
 More information on the LISA system can be found here: https://userinfo.surfsara.nl/systems/lisa
 
 We have (at the time of writing) a project directory at:
 
-    /nfs/cortalg/
+    /projects/cortalg/
     
 I think it is currently set to expire on July 1st 2018. However, you could ask Surfsara for extension. 
 Caspar v.L. and Boy M. helped get the project space to begin with. General contact: helpdesk@surfsara.nl
