@@ -1,6 +1,9 @@
 Processing steps used in NHP fMRI
 =================================
 
+**NB! Most of this has been superceded by BIDS-based analysis pipelines    
+(see https://github.com/VisionandCognition/NHP-BIDS)**
+
 Code repository
 ---------------
 Reusable code is put in the Process-NHP-MRI repository, which is at:
