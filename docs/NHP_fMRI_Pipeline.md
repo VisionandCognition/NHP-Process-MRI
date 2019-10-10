@@ -86,7 +86,7 @@ You can find more recent examples with the following from `Data_raw` or the subj
 
     find -maxdepth 3 -name "copy-to-bids.sh" -exec ls -lt {} +
 
-For more on processing BIDS pipeline, see: [BIDS_Processing](BIDS_processing.md).
+For more on processing BIDS pipeline, see: [NHP-BIDS_Processing](NHP-BIDS_processing.md).
 
 [Processing the T1 anatomical](Process_T1_anatomical.md)
 ------------------------------
@@ -107,4 +107,4 @@ For more details, visit [Processing the B0 fieldmap for undistortion](Processing
 
 Note: A lot of the this information has been replaced by the [BIDS_processing pipeline](BIDS_processing.md).
 
-Information on processing the functional data has been moved to [Process functional data](Process_functional_data.md).
+Information on processing the functional data has been moved to https://github.com/VisionandCognition/NHP-BIDS.
