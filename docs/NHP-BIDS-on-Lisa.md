@@ -61,71 +61,25 @@ Install nipype:
     pip install git+https://github.com/VisionandCognition/nipype.git
 
 
-[OPTIONAL] Syncing Project dir
-==============================
+Mount LISA disks on your local system (for syncing and data transfer)
+=====================================================================
 
-Using FreeFileSync
-------------------
+In order to map LISA directories to a local machine (mac, linux), I use sshfs (https://github.com/libfuse/sshfs). On the local machines I have bash script to mount the home folder and our project folder as separate disks that are then accessible like any other drive ('open with fsleyes' works for instance).
 
-This is a bit involved. I first create a mount point for the project dir on my local system (`/mnt/lisa-cortalg/`).
-This will only work from SURFSARA white-listed IP addresses.
-My fstab entry looks like:
+For linux, the mount script (mount-lisa.sh) reads:
+`!#/bin/bash
+sshfs -o reconnect <username>@lisa.surfsara.nl:/home/<username> /media/LISA_home 
+sshfs -o reconnect <username>@lisa.surfsara.nl:/nfs/<projectfolder> /media/LISA_<project>`
 
-    jonathan@lisa.surfsara.nl:/nfs/cortalg /mnt/lisa-cortalg fuse.sshfs noauto,x-systemd.automount,_netdev,users,idmap=user,transform_symlinks,identityfile=/home/jonathan/.ssh/id_rsa,allow_other,uid=1000,gid=1000,allow_other,reconnect 0 0
+For mac, it's:
+`!#/bin/bash
+sshfs <username>@lisa.surfsara.nl:/home/<username> /Volumes/sshfs/LISA_home -o defer_permissions -o volname=LISA_home
+sshfs <username>@lisa.surfsara.nl:/nfs/<projectfolder> /Volumes/sshfs/LISA_<project> -o defer_permissions -o volname=LISA_<project>`
 
-Then I set it to sync with my local BIDS-NHP directory (`/big/NHP_MRI/NHP-BIDS/`).
+The unmount scripts (unmount-lisa.sh) for both simply read:
+`!#/bin/bash
+umount <whatever_you_mounted_to_and_repeat_this_line_for_all_mounts>`
 
-    <?xml version="1.0" encoding="UTF-8"?>
-    <FreeFileSync XmlFormat="8" XmlType="BATCH">
-        <MainConfig>
-            <Comparison>
-                <Variant>TimeAndSize</Variant>
-                <Symlinks>Exclude</Symlinks>
-                <IgnoreTimeShift/>
-            </Comparison>
-            <SyncConfig>
-                <Variant>TwoWay</Variant>
-                <DetectMovedFiles>false</DetectMovedFiles>
-                <DeletionPolicy>RecycleBin</DeletionPolicy>
-                <VersioningFolder Style="Replace"/>
-            </SyncConfig>
-            <GlobalFilter>
-                <Include>
-                    <Item>*</Item>
-                </Include>
-                <Exclude>
-                    <Item>/.Trash-*/</Item>
-                    <Item>/.recycle/</Item>
-                </Exclude>
-                <TimeSpan Type="None">0</TimeSpan>
-                <SizeMin Unit="None">0</SizeMin>
-                <SizeMax Unit="None">0</SizeMax>
-            </GlobalFilter>
-            <FolderPairs>
-                <Pair>
-                    <Left>/big/NHP_MRI/NHP-BIDS/</Left>
-                    <Right>/mnt/lisa-cortalg/NHP-BIDS/</Right>
-                    <LocalFilter>
-                        <Include>
-                            <Item>sourcedata</Item>
-                            <Item>derivatives</Item>
-                            <Item>sub-*</Item>
-                            <Item>scratch</Item>
-                        </Include>
-                        <Exclude/>
-                        <TimeSpan Type="None">0</TimeSpan>
-                        <SizeMin Unit="None">0</SizeMin>
-                        <SizeMax Unit="None">0</SizeMax>
-                    </LocalFilter>
-                </Pair>
-            </FolderPairs>
-            <IgnoreErrors>false</IgnoreErrors>
-            <PostSyncCommand Condition="Completion"/>
-        </MainConfig>
-        <BatchConfig>
-            <ErrorDialog>Show</ErrorDialog>
-            <PostSyncAction>Exit</PostSyncAction>
-            <RunMinimized>true</RunMinimized>
-            <LogfileFolder Limit="1000">/tmp/logs-freefilesync</LogfileFolder>
-        </BatchConfig>
-    </FreeFileSync>
+Don't forget to make these scripts executable (`chmod +x <script.sh>`). This approach furthermore assumes that you have configured a password-less login to LISA using the RSA key-pairing (instructions here: https://userinfo.surfsara.nl/systems/lisa/user-guide/connecting-and-transferring-data#sshkey)
+
+I then use FreeFileSync (https://freefilesync.org/) to keep folders in different locations synced.
