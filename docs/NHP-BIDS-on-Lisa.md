@@ -5,7 +5,7 @@ We have (at the time of writing) a project directory at:
 
     /projects/cortalg/
     
-I think it is currently set to expire on July 1st 2018. However, you could ask Surfsara for extension. 
+These project spaces are set to expire yearly. However, you can ask Surfsara for extensions. 
 Caspar v.L. and Boy M. helped get the project space to begin with. General contact: helpdesk@surfsara.nl
 
 
