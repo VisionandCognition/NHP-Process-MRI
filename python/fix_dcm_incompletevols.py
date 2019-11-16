@@ -1,3 +1,7 @@
+# Call this script with the path to your dicom folder as argument
+# e.g., python fix_dcm_incompletevols.py dicom_folder
+# p.c.klink@gmail.com
+
 import os, sys, shutil, glob
 import pydicom, numpy
 
