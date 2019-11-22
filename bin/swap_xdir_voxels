@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# give the path to a Data_folder as input
+if [ $# -eq 0 ]; then
+    echo "No path specified. Please tell the script where to look:"
+    read NIIFLD
+else
+    # ROOT=/NHP_MRI/NHP-BIDS/
+    NIIFLD=${1}
+fi
+
+
+echo 'Swapping x voxel order'
+for f in $(find -L ${NIIFLD} -name '*.nii.gz'); do 
+	fslswapdim $f -x y z $f
+done
+echo 'Done'

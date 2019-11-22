@@ -1,0 +1,16 @@
+#! /bin/bash
+
+# give the path to a Data_folder as input
+if [ $# -eq 0 ]; then
+    echo "No path specified. Please tell the script where to look:"
+    read ROOT
+else
+    # ROOT=/NHP_MRI/NHP-BIDS/
+    ROOT=${1}
+fi
+
+# replace scan with run in anat/fmap/dwi folders
+declare -a typefld=(anat fmap dwi)
+for t in "${!typefld[@]}"; do
+    find -L ${ROOT} -name *${t}*scan* -type f -exec bash -c 'mv "$1" "${1/scan/run}"' -- {} \;
+done

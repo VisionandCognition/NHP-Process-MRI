@@ -1,0 +1,38 @@
+#! /bin/bash
+
+# give the path to a Data_folder as input
+if [ $# -eq 0 ]; then
+    echo "No path specified. Please tell the script where to look for jsons:"
+    read RAWDATA
+else
+    RAWDATA=${1}
+fi
+
+# Take input ====
+echo 'What do you want to do?'
+echo 's=silence / u=unsilence / es=emulate silence / eu=emulate unsilence'
+read MODE
+
+# Execute ====
+if [ -d ${RAWDATA} ]; then
+    if [ ${MODE} == 'es' ]; then
+        echo 'Emulating silencing. These are existing json files:'
+        find -L ${RAWDATA} -name '*session.json' -type f
+    elif [ ${MODE} == 'eu' ]; then
+        echo 'Emulating unsilencing. These are existing json_noindex files:'
+        find -L ${RAWDATA} -name '*session.json_noindex' -type f
+    elif [ ${MODE} == 's' ]; then
+        echo 'Silencing json files in Data_raw for indexing.'
+        echo 'Adding _noindex to extension.'
+        find -L ${RAWDATA} -name '*session.json' -type f -exec bash -c 'mv "$1" "${1}_noindex"' -- {} \;
+    elif [ ${MODE} == 'u' ]; then
+        echo 'Unsilencing json files in Data_raw for indexing.'
+        echo 'Removing _noindex from extension.'
+        find -L ${RAWDATA} -name '*session.json_noindex' -type f -exec bash -c 'mv "$1" "${1/_noindex/}"' -- {} \;
+    else
+        echo ${MODE} 'is not a valid choice. Not doing anything'
+        exit 1
+    fi
+else
+    echo 'Invalid path ' ${RAWDATA}
+fi
