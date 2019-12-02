@@ -24,11 +24,14 @@ if len(sys.argv) > 1:
     vol_list=[];
     for i in numpy.unique(vol_num):
         vol_list.append(vol_num.count(i))
+    
+    print('Number of slices in each volume')
+    print(vol_list)
 
     # get the indexes of the slices belonging to the last (incomplete) volume
     if vol_list[-1] != vol_list[0]:
         del_dcm = [i for i,x in enumerate(vol_num) if x==numpy.max(vol_num)]
-        print('The following slice files will be ignored')
+        print('The following slice files will be taken out')
         print(del_dcm)
         
         if os.path.isdir(dcmpath + '/orphan_dcm') is False:
