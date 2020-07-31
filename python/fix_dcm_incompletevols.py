@@ -32,15 +32,28 @@ if len(sys.argv) > 1:
                 print('{}: {}'.format(f,e))
 
         # how many slices in each volume
-        vol_list=[];
+        vol_list=[]
+        # setup a dictionary to handle all the slice locations and number of acquisitions at that location
+        vol_dict = {}
         for i in set(volnum):
+            vol_dict[volnum] = volnum.count(i)
             vol_list.append(volnum.count(i))
 
         # get the indexes of the slices belonging to the last (incomplete) volume
         if max(vol_list) != min(vol_list): # First index vs last may not work, depending on acquisition scheme (i.e., even-first, interleaved)
             last_full_acq = min(vol_list)*len(vol_list)
             print('Using {} files ({} slices*{} complete volumes)'.format(last_full_acq, len(vol_list), min(vol_list)))
-            del_dcm = [i for i,x in enumerate(volnum) if x==numpy.max(volnum)]
+            del_dcm = []
+            # Find the number of acquisitions for each slice that correspond to the minimum number of full volumes acquired.
+            for v, dcm_file in enumerate(vol):
+                try:
+                    dcm_info = pydicom.filereader.dcmread(dcm_file,stop_before_pixels=True)
+                    vol_dict[dcm_info.SliceLocation] = vol_dict[dcm_info.SliceLocation] - 1
+                    if vol_dict[dcm_info.SliceLocation] < 0:
+                        del_dcm.append(v)
+                except Exception as e:
+                    print('{}: {}'.format(f,e))
+
             print('The following slice files will be ignored')
             print(del_dcm)
 
