@@ -70,7 +70,7 @@ if len(sys.argv) > 1:
                 shutil.move(dcm_list[f],os.path.join(dcmpath , 'orphan_dcm' , orphan_filename[1]))
 
             # remove the corrupted entries from the original list (accomodates original extensions)
-            del dcm_list[last_full_acq::]
+            dcm_list = [keep for f, keep in enumerate(dcm_list) if f not in del_dcm]
 
             print('Moving the rest of the dcm files to corrected_dcm')
             for f in dcm_list:
