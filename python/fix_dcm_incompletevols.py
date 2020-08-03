@@ -43,37 +43,44 @@ if len(sys.argv) > 1:
         if max(vol_list) != min(vol_list): # First index vs last may not work, depending on acquisition scheme (i.e., even-first, interleaved)
             last_full_acq = min(vol_list)*len(vol_list)
             print('Using {} files ({} slices*{} complete volumes)'.format(last_full_acq, len(vol_list), min(vol_list)))
-            del_dcm = []
+
+            # Reset the max counter for each of the slice locations to the minimum number of complete acquisitions.
+            for k in vol_dict.keys():
+                vol_dict[k] = min(vol_list)
+            corr_dcm_list = []
+            orphaned_list = []
+
             # Find the number of acquisitions for each slice that correspond to the minimum number of full volumes acquired.
             for v, dcm_file in enumerate(vol):
                 try:
                     dcm_info = pydicom.filereader.dcmread(dcm_file,stop_before_pixels=True)
                     vol_dict[dcm_info.SliceLocation] = vol_dict[dcm_info.SliceLocation] - 1
-                    if vol_dict[dcm_info.SliceLocation] < 0:
-                        del_dcm.append(v)
+                    if vol_dict[dcm_info.SliceLocation] >= 0:
+                        corr_dcm_list.append(dcm_file)
+                    else:
+                        print('Delete:{}'.format(dcm_info.SliceLocation))
+                        orphaned_list.append(dcm_file)
                 except Exception as e:
                     print('{}: {}'.format(f,e))
 
             print('The following slice files will be ignored')
-            print(del_dcm)
+            print(orphaned_list)
 
             if os.path.isdir(os.path.join(dcmpath , 'orphan_dcm')) is False:
                 os.mkdir(os.path.join(dcmpath , 'orphan_dcm'))
             if os.path.isdir(os.path.join(dcmpath , 'corrected_dcm')) is False:
                 os.mkdir(os.path.join(dcmpath , 'corrected_dcm'))
 
-            print('Moving {} orphan dcm files to orphan_dcm'.format(len(del_dcm)))
+            print('Moving {} orphan dcm files to orphan_dcm'.format(len(orphaned_list)))
             # print('Moving the following orphan dcm files to orphan_dcm')
-            for f in del_dcm:
+            for f in orphaned_list:
                 #print(dcm_list[f])
-                orphan_filename = os.path.split(dcm_list[f])
-                shutil.move(dcm_list[f],os.path.join(dcmpath , 'orphan_dcm' , orphan_filename[1]))
+                orphan_filename = os.path.split(orphaned_list[f])
+                shutil.move(orphaned_list[f],os.path.join(dcmpath , 'orphan_dcm' , orphan_filename[1]))
 
-            # remove the corrupted entries from the original list (accomodates original extensions)
-            dcm_list = [keep for f, keep in enumerate(dcm_list) if f not in del_dcm]
 
             print('Moving the rest of the dcm files to corrected_dcm')
-            for f in dcm_list:
+            for f in corr_dcm_list:
                 shutil.move(f,os.path.join(dcmpath , 'corrected_dcm',))
         else:
             print('All volumes are complete, will not mess with dcm files.')
