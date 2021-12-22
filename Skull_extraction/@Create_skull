@@ -1,0 +1,12 @@
+#!/bin/tcsh
+
+
+	set subj = 'lilo_t1'
+	set KPB = '0.01'
+	set Niter = '500'
+        set outformat = '-o_stl'
+        set informat = '-i_stl'
+	IsoSurface -isorois -mergerois ${subj}.skull.mask.cedge.ed -Tsmooth ${KPB} ${Niter}  -input ${subj}.skull.mask.cedge.ed.nii  ${outformat} ${subj}.skull.mask.cedge.ed.sm.${KPB}.${Niter}
+
+afni -niml &
+suma ${informat} ${subj}.skull.mask.cedge.ed.sm.${KPB}.${Niter}.stl -sv ${subj}.c1.nii &

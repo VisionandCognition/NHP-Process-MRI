@@ -1,0 +1,18 @@
+#!/bin/tcsh
+
+	set subj = 'lilo_t1'
+	3dAutomask -dilate 5.0 -prefix ${subj}.mask.l1.nii ${subj}.nii
+	3dcalc -a ${subj}.mask.l1.nii -b ${subj}.nii -expr 'a*b' -prefix ${subj}.c1.nii
+	3dUniformize -anat  ${subj}.c1.nii -niter 100 -prefix  ${subj}.c1.uni.nii
+	3dSkullStrip -input ${subj}.c1.uni.nii -prefix ${subj}.c1.uni.brain.nii
+	3dcalc -a  ${subj}.c1.uni.nii -expr 'ispositive(a-4897)' -prefix ${subj}.mask.muscle.brain.nii
+	3dcalc -a ${subj}.c1.uni.nii -b ${subj}.mask.muscle.brain.nii -expr 'a-(a*b)' -prefix ${subj}.mask.skull.l1.nii
+	3dAutomask -erode 3.0 -prefix ${subj}.mask.l2.nii ${subj}.c1.uni.nii 
+	3dcalc -a ${subj}.mask.l2.nii -b ${subj}.mask.skull.l1.nii -expr 'a*step(b)' -prefix  ${subj}.mask.skull.l2.nii
+	3dcalc -a ${subj}.mask.skull.l2.nii -b ${subj}.c1.uni.brain.nii -expr 'a-step(b)' -prefix ${subj}.mask.skull.l3.nii
+	3dcalc -a ${subj}.mask.skull.l3.nii -b ${subj}.c1.uni.nii -expr 'a*b' -prefix ${subj}.skull.nii
+	3dclust -1Dformat -nosum -1dindex 0 -1tindex 0 -dxyz=1 -savemask ${subj}.skull.mask.nii 1.01 2000 ${subj}.skull.nii
+	3dmask_tool -dilate_inputs 1 -1 -prefix ${subj}.skull.mask.cedge.nii  -input ${subj}.skull.mask.nii 	
+	rm p*.1D*
+	rm v*.1D*
+
