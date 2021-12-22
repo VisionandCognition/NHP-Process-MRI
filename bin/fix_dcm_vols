@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # Call this script with the path to your dicom folder as argument
-# e.g., python fix_dcm_incompletevols.py dicom_folder
+# e.g., python fix_dcm_vols.py dicom_folder
 # p.c.klink@gmail.com
 
 import os, sys, shutil, glob
@@ -13,12 +13,28 @@ if len(sys.argv) > 1:
     # get all dcm files
     dcm_list = (glob.glob(dcmpath + '/*.dcm'))
 
-    # get the temporal position tag for all dcm files
+    # get rid of dcm files without TemporalPositionIdentifier
+    for f in dcm_list:
+        dcm_info = pydicom.filereader.dcmread(f,stop_before_pixels=True)
+        #print(dcm_info.TemporalPositionIdentifier)
+        try:
+            dcm_info.TemporalPositionIdentifier
+        except:
+            print(f + ' lacks TemporalPositionIdentifier')
+            os.rename(f,f + '_withoutTPI')
+
+    # get the temporal position tag for all proper dcm files
+    dcm_list = (glob.glob(dcmpath + '/*.dcm'))
     print('Scanning ' + dcmpath + ' for dcm files...')
     vol_num =[];
     for f in dcm_list:
         dcm_info = pydicom.filereader.dcmread(f,stop_before_pixels=True)
-        vol_num.append(dcm_info.TemporalPositionIdentifier)
+        #print(dcm_info.TemporalPositionIdentifier)
+        try:
+            vol_num.append(dcm_info.TemporalPositionIdentifier)
+        except:
+            print(f + ' still lacks TemporalPositionIdentifier')
+    #print(vol_num)
 
     # how many slices in each volume
     vol_list=[];
