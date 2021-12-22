@@ -29,15 +29,15 @@ Clone the repo:
 If desired, you can create links to the shared project directory:
 
     cd ~/NHP-BIDS
-    ls /nfs/cortalg/NHP-BIDS/
-    ln -s /nfs/cortalg/NHP-BIDS/manual-masks .
-    ln -s /nfs/cortalg/NHP-BIDS/scratch .
-    ln -s /nfs/cortalg/NHP-BIDS/sourcedata .
-    ln -s /nfs/cortalg/NHP-BIDS/sub-eddy .
-    ln -s /nfs/cortalg/NHP-BIDS/sub-danny .
-    ln -s /nfs/cortalg/NHP-BIDS/sub-<MONKEY> . # add more monkeys when necessary
-    ln -s /nfs/cortalg/NHP-BIDS/derivatives .
-    ln -s /nfs/cortalg/NHP-BIDS/workingdirs .
+    ls /project/cortalg/NHP-BIDS/
+    ln -s /project/cortalg/NHP-BIDS/manual-masks .
+    ln -s /project/cortalg/NHP-BIDS/scratch .
+    ln -s /project/cortalg/NHP-BIDS/sourcedata .
+    ln -s /project/cortalg/NHP-BIDS/sub-eddy .
+    ln -s /project/cortalg/NHP-BIDS/sub-danny .
+    ln -s /project/cortalg/NHP-BIDS/sub-<MONKEY> . # add more monkeys when necessary
+    ln -s /project/cortalg/NHP-BIDS/derivatives .
+    ln -s /project/cortalg/NHP-BIDS/workingdirs .
     
 Derivatives also contains a folder manual-mask, which is there for historic reasons but should eventually be removed.
 
@@ -69,7 +69,7 @@ In order to map LISA directories to a local machine (mac, linux), I use sshfs (h
 For linux, the mount script (mount-lisa.sh) reads:
 `!#/bin/bash
 sshfs -o reconnect <username>@lisa.surfsara.nl:/home/<username> /media/LISA_home 
-sshfs -o reconnect <username>@lisa.surfsara.nl:/nfs/<projectfolder> /media/LISA_<project>`
+sshfs -o reconnect <username>@lisa.surfsara.nl:/project/<projectfolder> /media/LISA_<project>`
 
 For mac, it's:
 `!#/bin/bash
