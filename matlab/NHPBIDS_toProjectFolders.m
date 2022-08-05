@@ -8,7 +8,10 @@
 % c.klink@nin.knaw.nl
 
 %% define parameters ----------------------------------------------------
-basedir = '/media/NETDISKS/VS03_2/NHP_MRI/NHP-BIDS';
+%basedir = '/media/NETDISKS/VS03_2/NHP_MRI/NHP-BIDS'; % CK NIN
+%basedir = '/media/8TB/NHP-BIDS'; % CK home
+basedir = '/media/chris/CK4TB/NHP-BIDS'; % CK portable
+
 defproj = fullfile(basedir, 'projects','default');
 
 proj(1).name = 'CurveTracing';
